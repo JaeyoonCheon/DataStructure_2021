@@ -3,36 +3,51 @@
 #include <stdlib.h>
 
 #define SWAP(A, B, type) do{ \
-	type temp = A; \
+	int temp; \
+	temp = A; \
 	A = B; \
 	B = temp; \
-}while(0); \
+}while(0)
 
 int main() {
 	FILE* in;
-	int i, j, n, min;
+	int i, j, k, n, min;
 	int* arr;
+	int a, b;
 
-	if (!(in = fopen("in.txt", "w")))
+	if (!(in = fopen("in.txt", "r")))
 		perror("read file error");
 	if (!(fscanf(in, "%d", &n)))
 		perror("read count number error");
+	if (!(arr = (int*)malloc(sizeof(int) * n)))
+		perror("allocation error");
 
 	for (i = 0; i < n; i++) {
 		fscanf(in, "%d", &arr[i]);
 	}
 
-	for (i = 0; i < n; i++) {
-		min = i;
-		for (j = i + 1; j < n; j++) {
-			if (min > j)
-				min = j;
-		}
-		SWAP(arr[i], arr[min], int);
+	for (k = 0; k < n; k++) {
+		printf("%d ", arr[k]);
+		if (k == n - 1)
+			printf("\n");
 	}
 
 	for (i = 0; i < n; i++) {
-		printf("%d ", arr[i]);
+		min = i;
+		for (j = i; j < n; j++) {
+			if (arr[min] > arr[j])
+				min = j;
+		}
+
+		SWAP(arr[i], arr[min]);
+
+		for (k = 0; k < n; k++) {
+			printf("%d ", arr[k]);
+			if (k == n - 1)
+				printf("\n");
+		}
 	}
-	
+	for (k = 0; k < n; k++) {
+		printf("%d ", arr[k]);
+	}
 }
