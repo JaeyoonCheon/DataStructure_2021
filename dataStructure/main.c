@@ -13,7 +13,6 @@ int main() {
 	FILE* in;
 	int i, j, k, n, min;
 	int* arr;
-	int a, b;
 
 	if (!(in = fopen("in.txt", "r")))
 		perror("read file error");
