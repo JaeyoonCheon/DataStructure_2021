@@ -29,20 +29,20 @@ int main() {
 			perror("read element error");
 	}
 
-	perm(arr, 0, n);
+	perm(arr, 0, n-1);
 }
 
 void perm(int* arr, int i, int n) {
 	int j;
 
 	if (i == n) {
-		for (j = 0; j < n; j++) {
+		for (j = 0; j <= n; j++) {
 			printf("%d", arr[j]);
 		}
 		printf("\n");
 	}
 	else {
-		for (j = i; j < n; j++) {
+		for (j = i; j <= n; j++) {
 			SWAP(arr[i], arr[j], int);
 			perm(arr, i + 1, n);
 			SWAP(arr[i], arr[j], int);
