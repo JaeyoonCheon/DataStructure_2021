@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "selectionSort", "dataStruct
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "binarySearch", "binarySearch\binarySearch.vcxproj", "{CD683B3C-BEE2-4B59-9610-328B68DE19A8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "permutation", "permutation\permutation.vcxproj", "{43BD6BB1-F61B-4C7E-B23B-F2D84CD21336}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{CD683B3C-BEE2-4B59-9610-328B68DE19A8}.Release|x64.Build.0 = Release|x64
 		{CD683B3C-BEE2-4B59-9610-328B68DE19A8}.Release|x86.ActiveCfg = Release|Win32
 		{CD683B3C-BEE2-4B59-9610-328B68DE19A8}.Release|x86.Build.0 = Release|Win32
+		{43BD6BB1-F61B-4C7E-B23B-F2D84CD21336}.Debug|x64.ActiveCfg = Debug|x64
+		{43BD6BB1-F61B-4C7E-B23B-F2D84CD21336}.Debug|x64.Build.0 = Debug|x64
+		{43BD6BB1-F61B-4C7E-B23B-F2D84CD21336}.Debug|x86.ActiveCfg = Debug|Win32
+		{43BD6BB1-F61B-4C7E-B23B-F2D84CD21336}.Debug|x86.Build.0 = Debug|Win32
+		{43BD6BB1-F61B-4C7E-B23B-F2D84CD21336}.Release|x64.ActiveCfg = Release|x64
+		{43BD6BB1-F61B-4C7E-B23B-F2D84CD21336}.Release|x64.Build.0 = Release|x64
+		{43BD6BB1-F61B-4C7E-B23B-F2D84CD21336}.Release|x86.ActiveCfg = Release|Win32
+		{43BD6BB1-F61B-4C7E-B23B-F2D84CD21336}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
