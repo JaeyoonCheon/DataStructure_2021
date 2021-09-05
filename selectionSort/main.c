@@ -49,4 +49,6 @@ int main() {
 	for (k = 0; k < n; k++) {
 		printf("%d ", arr[k]);
 	}
+
+	return 0;
 }
