@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pibonacchi", "pibonacchi\pi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "matrix", "matrix\matrix.vcxproj", "{062281EE-5662-44C1-8B7A-E57A84119CBB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "day2", "day2\day2.vcxproj", "{906DA676-83C6-493E-948A-3C7AE4D32C2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -71,6 +73,14 @@ Global
 		{062281EE-5662-44C1-8B7A-E57A84119CBB}.Release|x64.Build.0 = Release|x64
 		{062281EE-5662-44C1-8B7A-E57A84119CBB}.Release|x86.ActiveCfg = Release|Win32
 		{062281EE-5662-44C1-8B7A-E57A84119CBB}.Release|x86.Build.0 = Release|Win32
+		{906DA676-83C6-493E-948A-3C7AE4D32C2A}.Debug|x64.ActiveCfg = Debug|x64
+		{906DA676-83C6-493E-948A-3C7AE4D32C2A}.Debug|x64.Build.0 = Debug|x64
+		{906DA676-83C6-493E-948A-3C7AE4D32C2A}.Debug|x86.ActiveCfg = Debug|Win32
+		{906DA676-83C6-493E-948A-3C7AE4D32C2A}.Debug|x86.Build.0 = Debug|Win32
+		{906DA676-83C6-493E-948A-3C7AE4D32C2A}.Release|x64.ActiveCfg = Release|x64
+		{906DA676-83C6-493E-948A-3C7AE4D32C2A}.Release|x64.Build.0 = Release|x64
+		{906DA676-83C6-493E-948A-3C7AE4D32C2A}.Release|x86.ActiveCfg = Release|Win32
+		{906DA676-83C6-493E-948A-3C7AE4D32C2A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
