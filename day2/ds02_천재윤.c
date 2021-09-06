@@ -37,6 +37,12 @@ int ifib(int n) {
 	// step 2
 	arr = (int*)malloc(sizeof(int) * (n+1));
 
+	if (n == 0) {
+		result = 0;
+		free(arr);
+		return result;
+	}
+
 	arr[0] = 0, arr[1] = 1;
 
 	for (i = 2; i <= n; i++) {
@@ -59,9 +65,14 @@ int main() {
 	//step 8
 	while (1) {
 		// step 1
-		do {
+		
+		while (1) {
 			scanf_s("%d", &N);
-		} while (N < 0 || N>50);
+			if (N < 0 || N >50)
+				return 0;
+			else
+				break;
+		}
 
 		start = clock();
 		// step 3

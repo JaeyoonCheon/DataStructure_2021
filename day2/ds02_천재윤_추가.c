@@ -3,6 +3,9 @@
 #include <math.h>
 
 int binPresentation(int N) {
+	if (N == 0) {
+		return 0;
+	}
 	if (N == 1) {
 		return 1;
 	}
@@ -18,9 +21,13 @@ int main() {
 	int N;
 	
 	while (1) {
-		do {
+		while (1) {
 			scanf_s("%d", &N);
-		} while (N < 0 || N>128);
+			if (N < 0 || N >128)
+				return 0;
+			else
+				break;
+		}
 
 		printf("%d\n", binPresentation(N));
 	}
