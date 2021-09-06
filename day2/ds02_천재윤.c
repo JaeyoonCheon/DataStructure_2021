@@ -23,7 +23,7 @@
 //	return (n * (n + 1)) / 2;
 //}
 
-int rfib(int n) {
+double rfib(int n) {
 	if (n == 0)
 		return 0;
 	if (n == 1)
@@ -31,11 +31,12 @@ int rfib(int n) {
 	return rfib(n - 1) + rfib(n - 2);
 }
 
-int ifib(int n) {
-	int i, *arr, result;
+double ifib(int n) {
+	double *arr, result;
+	int i;
 
 	// step 2
-	arr = (int*)malloc(sizeof(int) * (n+1));
+	arr = (double*)malloc(sizeof(double) * (n+1));
 
 	if (n == 0) {
 		result = 0;
@@ -76,7 +77,7 @@ int main() {
 
 		start = clock();
 		// step 3
-		printf("Iteration F(n) : %d\n", ifib(N));
+		printf("Iteration F(n) : %.lf\n", ifib(N));
 		finish = clock();
 		elapsed = ((double)(finish)-(double)(start)) / CLOCKS_PER_SEC;
 		// step 4
@@ -84,7 +85,7 @@ int main() {
 
 		start = clock();
 		// step 6
-		printf("Recursive F(n) : %d\n", rfib(N));
+		printf("Recursive F(n) : %.lf\n", rfib(N));
 		finish = clock();
 		elapsed = ((double)(finish)-(double)(start)) / CLOCKS_PER_SEC;
 		// step 7
