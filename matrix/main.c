@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #define MAX_COLS 100
+#define MAX_TERMS 100
 
 typedef struct term {
 	int row;
@@ -12,12 +13,14 @@ typedef struct term {
 
 void transpose(term*, term*);
 void fastTranspose(term*, term*);
+void storeSum(term*, int*, int, int, int*);
+void mmult(term*, term*);
 void showMatrix(term*);
 
 int main() {
 	FILE* in;
 	int n, i;
-	term* A, * B, * C;
+	term* A, * B, * C, * D;
 
 	if (!(in = fopen("in.txt", "r")))
 		perror("read file error!");
@@ -27,6 +30,7 @@ int main() {
 	A = (term*)malloc(sizeof(term) * n);
 	B = (term*)malloc(sizeof(term) * n);
 	C = (term*)malloc(sizeof(term) * n);
+	D = (term*)malloc(sizeof(term) * n);
 
 	for (i = 0; i <= n; i++) {
 		fscanf(in, "%d %d %d", &A[i].row, &A[i].col, &A[i].val);
@@ -41,6 +45,10 @@ int main() {
 	printf("\nFast Transpose Matrix\n");
 	fastTranspose(A, C);
 	showMatrix(C);
+
+	printf("\nMatrix Multiplication\n");
+	mmult(A, C, D);
+	showMatrix(D);
 }
 
 void transpose(term* A, term* B) {
@@ -82,7 +90,7 @@ void fastTranspose(term* A, term* B) {
 		//startingPos를 정의함으로써 새로 만들어지는 term B에 index 순서대로 해당 row 원소 개수만큼 넣을 수 있다.
 		startingPos[0] = 1;
 		for (i = 1; i < numCols; i++) {
-			startingPos[i] = startingPos[i - 1] + rowTerms[i - 1]; 
+			startingPos[i] = startingPos[i - 1] + rowTerms[i - 1];
 		}
 		for (i = 1; i <= numTerms; i++) {
 			j = startingPos[A[i].col]++;
@@ -91,12 +99,103 @@ void fastTranspose(term* A, term* B) {
 	}
 }
 
-void showMatrix(term* X) {
-	int i, n = X[0].val;
+void storeSum(term* D, int* totalD, int row, int col, int* sum) {
+	if (*sum) {
+		if (*totalD < MAX_TERMS) {
+			D[++ * totalD].row = row;
+			D[*totalD].col = col;
+			D[*totalD].val = *sum;
+			*sum = 0;
+		}
+		else {
+			fprintf(stderr, "Numbers of terms in product exceeds %d\n", MAX_TERMS);
+			exit(EXIT_FAILURE);
+		}
+	}
+}
 
-	for (i = 0; i < n+1; i++) {
-		printf("matrix[%d] row: %d col: %d val: %d\n", i, X[i].row, X[i].col, X[i].val);
+void mmult(term* A, term* B, term* D) {
+	int i, j, col;
+	int totalB = B[0].val, totalD = 0;
+	int rowsA = A[0].row, colsA = A[0].col, totalA = A[0].val, colsB = B[0].col;
+	int rowBegin = 1, row = A[1].row, sum = 0;
+
+	term* newB;
+	newB = (term*)malloc(sizeof(term) * MAX_TERMS);
+
+	if (colsA != B[0].row) {
+		fprintf(stderr, "Incampatible matrices\n");
+		exit(EXIT_FAILURE);
 	}
 
+	fastTranspose(B, newB);
+
+	A[totalA + 1].row = rowsA;
+	newB[totalB + 1].row = colsB;
+	newB[totalB + 1].col = 0;
+
+	for (i = 1; i <= totalA; i++) {
+		col = newB[i].row;
+		for (j = 1; j <= totalB + 1;) {
+			if (A[i].row != row) {
+				storeSum(D, &totalD, row, col, &sum);
+				i = rowBegin;
+				for (; newB[j].row == col; j++);
+				col = newB[j].row;
+			}
+			else if (newB[j].row != col) {
+				storeSum(D, &totalD, row, col, &sum);
+				i = rowBegin;
+				col = newB[j].row;
+			}
+			else {
+				if (A[i].col < newB[j].col) {
+					i++;
+				}
+				else if (A[i].col == newB[j].col) {
+					sum += (A[i++].val * newB[j++].val);
+				}
+				else {
+					j++;
+				}
+			}
+		}
+		for (; A[i].row == row; i++);
+		rowBegin = i;
+		row = A[i].row;
+	}
+	D[0].row = rowsA;
+	D[0].col = colsB;
+	D[0].val = totalD;
+	printf("totalD : %d\n", totalD);
+}
+
+void showMatrix(term* X) {
+	int i, j, n = X[0].val;
+	int **arr = (int**)malloc(sizeof(int*)*X[0].row);
+	for (i = 0; i < X[0].row; i++) {
+		arr[i] = (int*)malloc(sizeof(int) * X[0].col);
+	}
+	/*for (i = 0; i < n + 1; i++) {
+		printf("matrix[%d] row: %d col: %d val: %d\n", i, X[i].row, X[i].col, X[i].val);
+	}*/
+
+	for (i = 0; i < X[0].row; i++) {
+		for (j = 0; j < X[0].col; j++) {
+			arr[i][j] = 0;
+		}
+	}
+
+	for (i = 1; i <= X[0].val; i++) {
+		arr[X[i].row][X[i].col] = X[i].val;
+	}
+
+	for (i = 0; i < X[0].row; i++) {
+		for (j = 0; j < X[0].col; j++) {
+			printf("%d ", arr[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
 	return;
 }
