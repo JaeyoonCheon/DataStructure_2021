@@ -134,7 +134,7 @@ void mmult(term* A, term* B, term* D) {
 	newB[totalB + 1].row = colsB;
 	newB[totalB + 1].col = 0;
 
-	for (i = 1; i <= totalA; i++) {
+	for (i = 1; i <= totalA;) {
 		col = newB[i].row;
 		for (j = 1; j <= totalB + 1;) {
 			if (A[i].row != row) {
