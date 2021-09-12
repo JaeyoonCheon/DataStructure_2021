@@ -4,18 +4,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_QUEUE_SIZE 100
+#define MAX_QUEUE_SIZE 10
 
 int* createQueue();
-void add(int*, int, int*);
-int delete(int*, int*);
+void add(int*, int, int*, int*);
+int delete(int*, int*, int*);
 void queueFull();
 void queueEmpty();
-void showqueue(int*, int*);
+void showQueue(int*, int*, int*);
 
+//¿øÇü Å¥
 int main() {
 	int* queue;
-	int front = -1, rear = -1;
+	int front = 0, rear = 0;
 	int i, data;
 	char keyword[10];
 
@@ -23,14 +24,14 @@ int main() {
 
 	while (1) {
 		scanf("%s", keyword);
-		if (!strcmp(keyword, "push")) {
+		if (!strcmp(keyword, "add")) {
 			scanf("%d", &data);
-			push(stack, data, &top);
-			showStack(stack, &top);
+			add(queue, data, &front, &rear);
+			showQueue(queue, &front, &rear);
 		}
-		else if (!strcmp(keyword, "pop")) {
-			printf("stack pop! : %d\n", pop(stack, &top));
-			showStack(stack, &top);
+		else if (!strcmp(keyword, "del")) {
+			printf("stack pop! : %d\n", delete(queue, &front, &rear));
+			showQueue(queue, &front, &rear);
 		}
 		else {
 			printf("buffer\n");
@@ -38,43 +39,54 @@ int main() {
 	}
 }
 
-int* createStack() {
-	int* stack = (int*)calloc(MAX_STACK_SIZE, sizeof(int));
+int* createQueue() {
+	int* stack = (int*)calloc(MAX_QUEUE_SIZE, sizeof(int));
 
 	return stack;
 }
 
-void push(int* stack, int data, int* top) {
-	if (*top >= MAX_STACK_SIZE) {
-		stackFull();
+void add(int* queue, int data, int* front, int* rear) {
+	if ((*rear) + 1 == *front) {
+		queueFull();
 	}
-	stack[++(*top)] = data;
+	*rear = ((*rear) + 1) % (MAX_QUEUE_SIZE + 1);
+	queue[(*rear)] = data;
 }
 
-int pop(int* stack, int* top) {
-	if (*top < 0) {
-		stackEmpty();
+int delete(int* queue, int* front, int* rear) {
+	if (*rear == *front) {
+		queueEmpty();
 	}
-	return stack[(*top)--];
+	*front = ((*front) + 1) % (MAX_QUEUE_SIZE + 1);
+	return queue[*front];
 }
 
-void stackFull() {
-	fprintf(stderr, "stack is full!\n");
+void queueFull() {
+	fprintf(stderr, "queue is full!\n");
 	exit(EXIT_FAILURE);
 }
 
-void stackEmpty() {
-	fprintf(stderr, "stack is empty!\n");
+void queueEmpty() {
+	fprintf(stderr, "queue is empty!\n");
 	exit(EXIT_FAILURE);
 }
 
-void showStack(int* stack, int* top) {
+void showQueue(int* queue, int* front, int* rear) {
 	int i;
 
-	printf("Current top : %d\n", *top);
-	printf("Current stack : ");
-	for (i = 0; i <= *top; i++) {
-		printf("%d ", stack[i]);
+	printf("Current front-rear : %d %d\n", *front, *rear);
+	printf("Current queue : ");
+
+	i = ((*front) + 1) % (MAX_QUEUE_SIZE + 1);
+	while (1) {
+		if (*front == *rear) {
+			printf("Empty Queue\n");
+			break;
+		}
+		if (i > *rear) {
+			break;
+		}
+		printf("%d ", queue[i++ % (MAX_QUEUE_SIZE + 1)]);
 	}
 	printf("\n");
 }
