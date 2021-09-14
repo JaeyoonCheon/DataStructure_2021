@@ -13,7 +13,7 @@ void queueFull();
 void queueEmpty();
 void showQueue(int*, int*, int*);
 
-//원형 큐
+//원형 큐da
 int main() {
 	int* queue;
 	int front = 0, rear = 0;
