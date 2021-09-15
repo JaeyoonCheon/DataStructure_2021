@@ -84,7 +84,7 @@ int** mMult(int** arr1, int** arr2, int m1x, int m1y, int m2x, int m2y) {
 		for (j = 0; j < m2y; j++) {
 			for (k = 0; k < m2x; k++) {
 				sum += arr1[i][k] * arr2[k][j];
-				// printf("%d %d %d ", arr1[i][k], arr2[j][k], sum);
+				// sum += arr1[i][k] * arr2[j][k]; transpose했을 경우
 			}
 			newMatrix[i][j] = sum;
 			sum = 0;
