@@ -80,6 +80,8 @@ int** mMult(int** arr1, int** arr2, int m1x, int m1y, int m2x, int m2y) {
 		newMatrix[i] = (int*)malloc(sizeof(int) * m2y);
 	}
 
+	printf("%d %d\n", m1x, m2y);
+
 	for (i = 0; i < m1x; i++) {
 		for (j = 0; j < m2y; j++) {
 			for (k = 0; k < m2x; k++) {
