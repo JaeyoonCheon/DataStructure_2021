@@ -4,34 +4,40 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_QUEUE_SIZE 10
+#define MAX_QUEUE_SIZE 3
 
 int* createQueue();
-void add(int*, int, int*, int*);
-int delete(int*, int*, int*);
+void add(int);
+int delete();
 void queueFull();
 void queueEmpty();
-void showQueue(int*, int*, int*);
+void showQueue();
+
+//global variable
+
+int* queue;
+int front = 0, rear = 0;
+int capacity;
 
 //¿øÇü Å¥da
 int main() {
-	int* queue;
-	int front = 0, rear = 0;
-	int i, data;
 	char keyword[10];
+	int data;
 
 	queue = createQueue();
+
+	capacity = MAX_QUEUE_SIZE;
 
 	while (1) {
 		scanf("%s", keyword);
 		if (!strcmp(keyword, "add")) {
 			scanf("%d", &data);
-			add(queue, data, &front, &rear);
-			showQueue(queue, &front, &rear);
+			add(data);
+			showQueue();
 		}
 		else if (!strcmp(keyword, "del")) {
-			printf("stack pop! : %d\n", delete(queue, &front, &rear));
-			showQueue(queue, &front, &rear);
+			printf("stack pop! : %d\n", delete());
+			showQueue();
 		}
 		else {
 			printf("buffer\n");
@@ -40,30 +46,56 @@ int main() {
 }
 
 int* createQueue() {
-	int* stack = (int*)calloc(MAX_QUEUE_SIZE, sizeof(int));
+	int* stack = (int*)calloc(capacity, sizeof(int));
 
 	return stack;
 }
 
-void add(int* queue, int data, int* front, int* rear) {
-	if ((*rear) + 1 == *front) {
+void add(int data) {
+	if ((rear + 1) % (capacity + 1) == front) {
+		printf("front: %d, rear: %d\n", front, rear);
 		queueFull();
+
+		rear = (rear + 1) % (capacity + 1);
 	}
-	*rear = ((*rear) + 1) % (MAX_QUEUE_SIZE + 1);
-	queue[(*rear)] = data;
+
+	rear = (rear + 1) % (capacity + 1);
+	queue[rear] = data;
 }
 
-int delete(int* queue, int* front, int* rear) {
-	if (*rear == *front) {
+int delete() {
+	if (rear == front) {
 		queueEmpty();
 	}
-	*front = ((*front) + 1) % (MAX_QUEUE_SIZE + 1);
-	return queue[*front];
+	front = (front + 1) % capacity;
+	return queue[front];
+}
+
+void copy(int front, int rear, int* newQueue) {
+	int i;
+	for (i = front; i < rear; i++) {
+		newQueue[i] = queue[i];
+	}
 }
 
 void queueFull() {
-	fprintf(stderr, "queue is full!\n");
-	exit(EXIT_FAILURE);
+	int* newQueue;
+
+	printf("queue doubling!!\n");
+
+	newQueue = (int*)malloc(sizeof(int) * capacity * 2);
+
+	printf("queueFull.. front: %d rear: %d\n", front, rear);
+	
+	int start = (front + 1) % capacity;
+	if (start < 2) {
+		copy(start, start + capacity - 1, newQueue);
+	}
+	else {
+		copy(start, capacity, newQueue);
+		copy(rear + 1, capacity - start, newQueue);
+	}
+	showQueue();
 }
 
 void queueEmpty() {
@@ -71,22 +103,21 @@ void queueEmpty() {
 	exit(EXIT_FAILURE);
 }
 
-void showQueue(int* queue, int* front, int* rear) {
+void showQueue() {
 	int i;
 
-	printf("Current front-rear : %d %d\n", *front, *rear);
+	printf("Current front-rear : %d %d\n", front, rear);
 	printf("Current queue : ");
 
-	i = ((*front) + 1) % (MAX_QUEUE_SIZE + 1);
+	i = (front + 1) % (capacity + 1);
 	while (1) {
-		if (*front == *rear) {
-			printf("Empty Queue\n");
+		if (front == rear) {
+			queueEmpty();
+		}
+		if (i > rear) {
 			break;
 		}
-		if (i > *rear) {
-			break;
-		}
-		printf("%d ", queue[i++ % (MAX_QUEUE_SIZE + 1)]);
+		printf("%d ", queue[i++ % (capacity + 1)]);
 	}
 	printf("\n");
 }
