@@ -9,6 +9,7 @@
 int* createQueue();
 void add(int);
 int delete();
+void copy(int*, int*, int*);
 void queueFull();
 void queueEmpty();
 void showQueue();
@@ -52,14 +53,14 @@ int* createQueue() {
 }
 
 void add(int data) {
-	if ((rear + 1) % (capacity + 1) == front) {
-		printf("front: %d, rear: %d\n", front, rear);
-		queueFull();
+	rear = (rear + 1) % capacity;
 
-		rear = (rear + 1) % (capacity + 1);
+	// is next cell front? -> mod rear for capacity + 1
+	if (rear == front) {
+		//queue full. alert and doubling queue
+		queueFull();
 	}
 
-	rear = (rear + 1) % (capacity + 1);
 	queue[rear] = data;
 }
 
@@ -71,30 +72,55 @@ int delete() {
 	return queue[front];
 }
 
-void copy(int front, int rear, int* newQueue) {
+void copy(int* front, int* rear, int* newQueue) {
 	int i;
-	for (i = front; i < rear; i++) {
-		newQueue[i] = queue[i];
+
+	printf("size : %d\n", sizeof(newQueue));
+	
+	for (i = 0; i < capacity * 2; i++) {
+		printf("%d %d address : %x\n",i, newQueue[i], &newQueue[i]);
 	}
+	printf("\n");
+
+	printf("front %x %d: rear %x %d\n", front, *front, rear, *rear);
+	
+	for (i = 0; i < sizeof(newQueue); i++) {
+		*(front + i) = *(rear + i);
+	}
+	printf("\n");
 }
 
 void queueFull() {
 	int* newQueue;
-
 	printf("queue doubling!!\n");
 
+	// make new queue for copy old queue
 	newQueue = (int*)malloc(sizeof(int) * capacity * 2);
 
 	printf("queueFull.. front: %d rear: %d\n", front, rear);
-	
+
 	int start = (front + 1) % capacity;
+
+	// 환형 큐에서 add/del을 통해 front가 움직인 경우를 검사(front가 초기 위치가 아니면 rear가 capacity를 넘어감)
 	if (start < 2) {
-		copy(start, start + capacity - 1, newQueue);
+		printf("one block!\n");
+		// front ~ capacity 복사
+		printf("%d %d\n", *(queue + front), *(queue + capacity + 1));
+		copy(queue + front, queue + capacity + 1, newQueue);
 	}
 	else {
-		copy(start, capacity, newQueue);
-		copy(rear + 1, capacity - start, newQueue);
+		printf("two block!\n");
+		// front ~ capacity 복사
+		copy(queue + start, queue + capacity, newQueue);
+		// rear + 1 ~ 
+		copy(queue, queue + rear + 1, newQueue + capacity - start);
 	}
+
+	front = 2 * capacity - 1;
+	rear = capacity - 2;
+	capacity *= 2;
+	free(queue);
+	queue = newQueue;
 	showQueue();
 }
 
@@ -106,18 +132,19 @@ void queueEmpty() {
 void showQueue() {
 	int i;
 
-	printf("Current front-rear : %d %d\n", front, rear);
-	printf("Current queue : ");
-
-	i = (front + 1) % (capacity + 1);
-	while (1) {
-		if (front == rear) {
-			queueEmpty();
-		}
-		if (i > rear) {
-			break;
-		}
-		printf("%d ", queue[i++ % (capacity + 1)]);
+	for (i = 0; i < capacity; i++) {
+		printf("%d ", queue[i]);
 	}
+	printf("\n");
+
+	i = (front + 1) % capacity;
+	printf("i : %d, rear : %d\n", i, rear);
+	do {
+		i = i % capacity;
+		printf("%d ", queue[i% capacity]);
+		if (i == rear)
+			break;
+		i++;
+	} while (1);
 	printf("\n");
 }
