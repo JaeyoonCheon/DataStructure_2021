@@ -66,7 +66,7 @@ int main() {
 
 	fprintf(C, "%d ", finishD - startD + 1);
 	for (i = startD; i < finishD + 1; i++) {
-		fprintf(C, "%.0f %d ", terms[i].coef, terms[i].exp);
+		fprintf(C, "%f %d ", terms[i].coef, terms[i].exp);
 	}
 
 	fclose(A);
