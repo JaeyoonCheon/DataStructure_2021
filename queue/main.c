@@ -114,9 +114,9 @@ void queueFull() {
 		copy(queue + start, queue + start + capacity - 1, newQueue);
 	}
 	else {
-		// front ~ capacity 복사
+		// front ~ capacity 복사 -> 큐 앞쪽에 복사
 		copy(queue + start, queue + capacity, newQueue);
-		// rear + 1 ~ 
+		// 처음위치 ~ rear까지 복사 -> 큐 + capacity - front - 1 위치(front를 복사한 뒤쪽 위치)에 복사
 		copy(queue, queue + rear + 1, newQueue + capacity - start);
 	}
 
