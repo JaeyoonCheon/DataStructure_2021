@@ -33,6 +33,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "day6", "day6\day6.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "maze", "maze\maze.vcxproj", "{B72CB342-94AD-43D5-B9F7-D6BF92E39D23}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "day7", "day7\day7.vcxproj", "{8A6E979A-3177-4124-826D-8B8CD3BD773C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -161,6 +163,14 @@ Global
 		{B72CB342-94AD-43D5-B9F7-D6BF92E39D23}.Release|x64.Build.0 = Release|x64
 		{B72CB342-94AD-43D5-B9F7-D6BF92E39D23}.Release|x86.ActiveCfg = Release|Win32
 		{B72CB342-94AD-43D5-B9F7-D6BF92E39D23}.Release|x86.Build.0 = Release|Win32
+		{8A6E979A-3177-4124-826D-8B8CD3BD773C}.Debug|x64.ActiveCfg = Debug|x64
+		{8A6E979A-3177-4124-826D-8B8CD3BD773C}.Debug|x64.Build.0 = Debug|x64
+		{8A6E979A-3177-4124-826D-8B8CD3BD773C}.Debug|x86.ActiveCfg = Debug|Win32
+		{8A6E979A-3177-4124-826D-8B8CD3BD773C}.Debug|x86.Build.0 = Debug|Win32
+		{8A6E979A-3177-4124-826D-8B8CD3BD773C}.Release|x64.ActiveCfg = Release|x64
+		{8A6E979A-3177-4124-826D-8B8CD3BD773C}.Release|x64.Build.0 = Release|x64
+		{8A6E979A-3177-4124-826D-8B8CD3BD773C}.Release|x86.ActiveCfg = Release|Win32
+		{8A6E979A-3177-4124-826D-8B8CD3BD773C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

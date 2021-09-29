@@ -15,7 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.c">
+    <ClCompile Include="ds07_천재윤.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ds07_천재윤_추가.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -23,7 +26,10 @@
     <Text Include="m.txt">
       <Filter>소스 파일</Filter>
     </Text>
-    <Text Include="test.txt">
+    <Text Include="out.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
+    <Text Include="in.txt">
       <Filter>소스 파일</Filter>
     </Text>
   </ItemGroup>
