@@ -92,8 +92,11 @@ void stackFull() {
 
 	newStack = createStack(newCapacity);
 
+	capacity *= 2;
+
 	copy(newStack);
 
+	free(stack);
 	stack = newStack;
 }
 
@@ -111,6 +114,8 @@ void stackEmpty() {
 	newStack = createStack(newCapacity);
 
 	copy(newStack);
+
+	capacity /= 2;
 
 	free(stack);
 	stack = newStack;
