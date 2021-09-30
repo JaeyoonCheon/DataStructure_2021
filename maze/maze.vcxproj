@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="maze.txt" />
+    <Text Include="maze_debug.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c" />

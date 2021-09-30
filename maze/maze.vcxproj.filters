@@ -18,6 +18,9 @@
     <Text Include="maze.txt">
       <Filter>소스 파일</Filter>
     </Text>
+    <Text Include="maze_debug.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
