@@ -19,7 +19,7 @@ dir offset[8];
 dir stack[MAX_STACK_SIZE];
 int top = -1;
 
-int** maze, **cache;
+int** maze, ** cache;
 int x, y;
 
 //x, y의 구성 방향 주의
@@ -149,7 +149,7 @@ int isGoal(dir pos, int i) {
 	row = pos.row + offset[i].row;
 	col = pos.col + offset[i].col;
 
-	if (row == y-1 && col == x-1) {
+	if (row == y - 1 && col == x - 1) {
 		return 1;
 	}
 	else {
@@ -168,6 +168,7 @@ void findPath() {
 	stack[top].col = 0;
 	pos.row = 0;
 	pos.col = 0;
+	printf("current x : %d, y : %d\n", pos.row, pos.col);
 
 	while (1) {
 		//방문한 경우 cache에 기록
@@ -197,10 +198,56 @@ void findPath() {
 	}
 }
 
+void initStack(dir* pos) {
+	//처음 시작위치 = (0, 0)
+	top++;
+	stack[top].row = 0;
+	stack[top].col = 0;
+	(*pos).row = 0;
+	(*pos).col = 0;
+}
+
+int findPathRecursive(dir pos) {
+	int i;
+	dir temp;
+
+	//방문한 경우 cache에 기록
+	cache[pos.col][pos.row] = 1;
+	printf("current x : %d, y : %d\n", pos.row, pos.col);
+	//8방향 변위에 대해 범위/방문여부/진출가능여부 조사
+	for (i = 0; i < 8; i++) {
+		if (isScope(pos, i)) {
+			//해당 변위가 도착지인 경우 재귀 종료조건 설정
+			if (isGoal(pos, i)) {
+				printf("Goal!\n");
+				return 1;
+			}
+			if (!isVisited(pos, i) && !isPath(pos, i)) {
+				//해당 변위에 대한 임시 변위 temp 전달하여 계산
+				temp.row = pos.row + offset[i].row;
+				temp.col = pos.col + offset[i].col;
+
+				//해당 변위에 대해 다시 8방향을 검사하는 재귀 실행
+				//해당 변위가 도착지인 경우 재귀 종료조건 이행
+				if (findPathRecursive(temp)) {
+					return 1;
+				}
+				else
+					continue;
+			}
+		}
+	}
+	if (pos.row == 0 && pos.col == 0) {
+		printf("didn't find way\n");
+	}
+	return 0;
+}
+
 int main() {
 	FILE* fp;
+	dir pos;
 
-	fp = fopen("maze_debug.txt", "r");
+	fp = fopen("maze.txt", "r");
 
 	fscanf(fp, "%d %d", &x, &y);
 
@@ -212,5 +259,16 @@ int main() {
 	readMaze(fp);
 	printMaze();
 
+	//find maze path dfs use stack
 	findPath();
+
+	printf("\n");
+
+	//find maze path dfs use recursive
+	cache = createMaze();
+	initStack(&pos);
+	findPathRecursive(pos);
+	free(maze);
+
+	return 0;
 }
