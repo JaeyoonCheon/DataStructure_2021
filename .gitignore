@@ -338,3 +338,10 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+./sparseMatrix/sparseMatrix.zip
+./sparseMatrix/MatrixA.txt
+./sparseMatrix/VectorX.txt
+/sparseMatrix/MatrixA.txt
+/sparseMatrix/VectorX.txt
+*.zip
