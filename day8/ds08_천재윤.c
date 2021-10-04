@@ -17,18 +17,21 @@ typedef struct dir {
 dir offset[8];
 
 dir stack[MAX_STACK_SIZE];
+dir path[MAX_STACK_SIZE];
+int pathCount = 0;
 int top = -1;
 
-int** maze, ** cache;
-int x, y;
+char** maze, ** cache;
+int x = 5, y = 5;
+int s, t, u, v;
 
 //x, y의 구성 방향 주의
-int** createMaze() {
+char** createMaze() {
 	int i;
-	int** temp = (int**)calloc(y, sizeof(int*));
+	char** temp = (char**)calloc(y, sizeof(char*));
 
 	for (i = 0; i < y; i++) {
-		temp[i] = (int*)calloc(x, sizeof(int));
+		temp[i] = (char*)calloc(x, sizeof(char));
 	}
 
 	return temp;
@@ -51,12 +54,10 @@ void readMaze(FILE* fp) {
 	int i, j;
 	char partial;
 
-	printf("%d %d\n", x, y);
+	//printf("%d %d\n", x, y);
 
 	for (i = 0; i < x; i++) {
-		for (j = 0; j < y; j++) {
-			fscanf(fp, "%d", &maze[i][j]);
-		}
+		fscanf(fp, "%s", maze[i]);
 	}
 }
 
@@ -64,10 +65,7 @@ void printMaze() {
 	int i, j;
 
 	for (i = 0; i < x; i++) {
-		for (j = 0; j < y; j++) {
-			printf("%d ", maze[i][j]);
-		}
-		printf("\n");
+		printf("%s\n", maze[i]);
 	}
 }
 
@@ -120,7 +118,7 @@ int isVisited(dir pos, int i) {
 	row = pos.row + offset[i].row;
 	col = pos.col + offset[i].col;
 
-	if (cache[col][row] != 1) {
+	if (cache[col][row] != '1') {
 		return 0;
 	}
 	else {
@@ -135,7 +133,7 @@ int isPath(dir pos, int i) {
 	row = pos.row + offset[i].row;
 	col = pos.col + offset[i].col;
 
-	if (maze[col][row] != 1) {
+	if (maze[col][row] != '1') {
 		return 0;
 	}
 	else {
@@ -145,11 +143,18 @@ int isPath(dir pos, int i) {
 
 int isGoal(dir pos, int i) {
 	int row, col;
+	int k;
+	dir temp;
 
 	row = pos.row + offset[i].row;
 	col = pos.col + offset[i].col;
 
-	if (row == y - 1 && col == x - 1) {
+	if (row == v && col == u) {
+		maze[col][row] = 'x';
+		for (k = 0; k < pathCount; k++) {
+			//printf("%d %d\n", path[k].row, path[k].col);
+			maze[path[k].col][path[k].row] = 'x';
+		}
 		return 1;
 	}
 	else {
@@ -158,27 +163,30 @@ int isGoal(dir pos, int i) {
 }
 
 //iterative한 stack dfs maze
-void findPath() {
-	int i;
+void findPath(FILE* output) {
+	int i, j;
 	dir pos;
 
 	//처음 시작위치 = (0, 0)
 	top++;
-	stack[top].row = 0;
-	stack[top].col = 0;
-	pos.row = 0;
-	pos.col = 0;
-	printf("current x : %d, y : %d\n", pos.row, pos.col);
+	stack[top].row = t;
+	stack[top].col = s;
+	pos.row = t;
+	pos.col = s;
+	maze[s][t] = 'x';
+	//printf("current x : %d, y : %d\n", pos.row, pos.col);
 
 	while (1) {
 		//방문한 경우 cache에 기록
-		cache[pos.col][pos.row] = 1;
+		cache[pos.col][pos.row] = '1';
 		//8방향 변위에 대해 범위/방문여부/진출가능여부 조사
 		for (i = 0; i < 8; i++) {
-			if (!isPath(pos, i) && isScope(pos, i)) {
+			if (isScope(pos, i)) {
 				//해당 변위가 도착지인 경우 종료
-				if (isGoal(pos, i)) {
-					printf("Goal!\n");
+				if (!isPath(pos, i) && isGoal(pos, i)) {
+					for (j = 0; j < 5; j++) {
+						fprintf(output, "%s\n", maze[j]);
+					}
 					return;
 				}
 				if (!isVisited(pos, i) && !isPath(pos, i)) {
@@ -188,13 +196,16 @@ void findPath() {
 			}
 		}
 		if (isEmpty()) {
-			printf("Can't find any way\n");
+			fprintf(output, "No Path");
 			return;
 		}
 		//pop하여 방금 저장한 이동가능한 위치를 하나씩 뽑아서 다시 8방향 조사
 		//갈수 없다면 상기의 for문 내에서 push가 없으므로 stack에서 계속 pop되어 아직 조사하지 않은 이동 가능 위치가 나올때 까지 pop
 		pos = pop();
-		printf("current x : %d, y : %d\n", pos.row, pos.col);
+		//printf("current x : %d, y : %d\n", pos.row, pos.col);
+		path[pathCount].row = pos.row;
+		path[pathCount].col = pos.col;
+		pathCount++;
 	}
 }
 
@@ -216,7 +227,7 @@ int findPathRecursive(dir pos) {
 	printf("current x : %d, y : %d\n", pos.row, pos.col);
 	//8방향 변위에 대해 범위/방문여부/진출가능여부 조사
 	for (i = 0; i < 8; i++) {
-		if (isScope(pos, i)) {
+		if (!isPath(pos, i) && isScope(pos, i)) {
 			//해당 변위가 도착지인 경우 재귀 종료조건 설정
 			if (!isPath(pos, i) && isGoal(pos, i)) {
 				printf("Goal!\n");
@@ -244,30 +255,43 @@ int findPathRecursive(dir pos) {
 }
 
 int main() {
-	FILE* fp;
+	FILE* fp, *output;
 	dir pos;
 
-	fp = fopen("maze.txt", "r");
+	printf("컴퓨터학부 2016115430 천재윤\n");
 
-	fscanf(fp, "%d %d", &x, &y);
+	fp = fopen("in.txt", "r");
+	output = fopen("out.txt", "w+");
 
 	maze = createMaze();
 	cache = createMaze();
 
 	makeOffset();
+	
+	scanf("%d %d %d %d", &s, &t, &u, &v);
+
+	// 좌표 기준값을 (0, 0)으로 조정
+	s--;
+	t--;
+	u--;
+	v--;
 
 	readMaze(fp);
-	printMaze();
+	//printMaze();
+	//printf("\n");
 
 	//find maze path dfs use stack
-	findPath();
+	findPath(output);
+	//printMaze();
 
-	printf("\n");
+	
+
+	//printf("\n");
 
 	//find maze path dfs use recursive
-	cache = createMaze();
-	initStack(&pos);
-	findPathRecursive(pos);
+	//cache = createMaze();
+	//initStack(&pos);
+	//findPathRecursive(pos);
 	free(maze);
 
 	return 0;
