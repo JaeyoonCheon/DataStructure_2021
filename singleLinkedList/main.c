@@ -18,14 +18,33 @@ typedef struct listNode {
 }listNode;
 
 void printList(listPointer* first) {
-	listPointer tail;
-	tail = (*first);
+	listPointer pointer;
+	pointer = (*first);
 
-	while (tail->link != NULL) {
-		printf("%d ", tail->data);
-		tail = tail->link;
+	while (pointer->link != NULL) {
+		printf("%d ", pointer->data);
+		pointer = pointer->link;
 	}
-	printf("%d", tail->data);
+	printf("%d", pointer->data);
+	printf("\n");
+}
+
+void delete(listPointer* first, int _data) {
+	listPointer front = NULL;
+	listPointer pointer;
+	pointer = (*first);
+
+	while (pointer->link != NULL && pointer->data != _data) {
+		front = pointer;
+		pointer = pointer->link;
+	}
+	printf("delete %d\n", pointer->data);
+	if (front) {
+		front->link = pointer->link;
+	}
+	else {
+		(*first) = (*first)->link;
+	}
 }
 
 void insert(listPointer* first, int _data) {
@@ -152,12 +171,13 @@ void unSortedList() {
 			return;
 		}
 	}
+	printList(&list);
 
-	printf("Input data at head or tail? head/tail : ");
-	scanf("%s", dir);
-	getchar();
 
 	while (1) {
+		printf("Input data at head or tail // Delete data? head/tail/del : ");
+		scanf("%s", dir);
+		getchar();
 		scanf("%d", &x);
 
 		if (!strcmp(dir, "head")) {
@@ -165,6 +185,9 @@ void unSortedList() {
 		}
 		else if (!strcmp(dir, "tail")) {
 			insertLast(&list, x);
+		}
+		else if (!strcmp(dir, "del")) {
+			delete(&list, x);
 		}
 		else {
 			return;
