@@ -38,6 +38,10 @@ void delete(listPointer* first, int _data) {
 		front = pointer;
 		pointer = pointer->link;
 	}
+	if (pointer->link == NULL && pointer->data != _data) {
+		printf("Not exist!\n");
+		return;
+	}
 	printf("delete %d\n", pointer->data);
 	if (front) {
 		front->link = pointer->link;
