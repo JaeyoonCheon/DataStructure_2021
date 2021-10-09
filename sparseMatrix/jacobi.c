@@ -9,27 +9,26 @@
 
 #define MAX_SIZE 100
 
-int rowSize, colSize, vSize, nonZero;
-double min = INT_MAX, max = INT_MIN;
-int minIdx, maxIdx;
-
-int* createMatrix();
+int rowSize, colSize, vSize, nonZero, N = 0;
+double er = 0.01;
 void initMatrix(double*, int*);
 void setX(FILE*, double*);
 void setMatrix(FILE*, double*, int*);
-void mmult(double*, double*, int*, double*);
+void makeMB(double*, double*, double*);
+void jacobi(double*, int*, double*, double*, double*, double*);
+int check(double*);
 
 int main() {
-	FILE* fa, * fx, * output1, * output2;
+	FILE* fa, * fb, * fx, * output1, * output2;
 	int* ja;
-	double* aa, * x, * result;
-	int i;
-	double norm = 0.0;
+	double* aa, * b, * x, * mb, *err;
+	int i, n;
 
 	fa = fopen("MatrixA.txt", "r+");
+	fb = fopen("VectorX.txt", "r+");
 	fx = fopen("VectorB.txt", "r+");
 	output1 = fopen("out.txt", "w+");
-	output2 = fopen("out_norm.txt", "w+");
+	output2 = fopen("aprox.txt", "w+");
 
 	// A 행렬의 row, column, nonZero 갯수 입력
 	fscanf(fa, "%d %d %d", &rowSize, &colSize, &nonZero);
@@ -42,6 +41,13 @@ int main() {
 	setMatrix(fa, aa, ja);
 
 	// X 벡터의 크기 입력 = A 행렬의 column 길이와 동일
+	fscanf(fb, "%d", &vSize);
+	// colSize+1 크기의 X 배열 동적할당(+1 -> 0 index 사용 x)
+
+	// X 배열 구성
+	b = (double*)calloc(colSize + 1, sizeof(double));
+	setX(fb, b);
+
 	fscanf(fx, "%d", &vSize);
 	// colSize+1 크기의 X 배열 동적할당(+1 -> 0 index 사용 x)
 	x = (double*)calloc(colSize + 1, sizeof(double));
@@ -51,52 +57,36 @@ int main() {
 
 	printf("input finished\n");
 
-	// 행렬 곱 결과를 담을 벡터 배열 생성(X와 동일한 A 행렬 column 길이 + 1)
-	result = (double*)calloc(colSize + 1, sizeof(double));
+	mb = (double*)calloc(colSize + 1, sizeof(double));
+	makeMB(aa, b, mb);
 
-	mmult(result, aa, ja, x);
-	
-	printf("multiplication finished\n");
+	err = (double*)calloc(colSize + 1, sizeof(double));
+
+	printf("n repeat : ");
+	scanf("%d", &n);
+
+	for (i = 0; i < n; i++) {
+		jacobi(aa, ja, x, b, mb, err);
+		if (check(err) == 0) {
+			printf("iteration %d, error!\n", i+1);
+			break;
+		}
+	}
+	printf("jacobi method finished\n");
 
 	// index 1부터 파일에 출력
 	for (i = 1; i < colSize; i++) {
-		fprintf(output1, "%e\n", result[i]);
+		fprintf(output1, "%e\n", x[i]);
 	}
 
-	// element 제곱의 합 연산
+	// index 1부터 파일에 출력
 	for (i = 1; i < colSize; i++) {
-		norm += powf(result[i], 2);
-	}
-
-	// norm 계산
-	norm = sqrtf(norm);
-
-	printf("norm : %e\n", norm);
-
-	for (i = 1; i < colSize; i++) {
-		fprintf(output2, "%e\n", result[i] / norm);
-	}
-
-	if (max > -1 * min) {
-		printf("절대값 최대 : %e\n", result[maxIdx] / norm);
-	}
-	else {
-		printf("절대값 최대 : %e\n", result[minIdx] / norm);
+		fprintf(output2, "%e\n", err[i]);
 	}
 
 	printf("finished\n");
 
 	return 0;
-}
-
-int* createMatrix() {
-	int i, j;
-	int* temp;
-	int matSIze = nonZero + 1;
-
-	temp = (int*)calloc(matSIze, sizeof(int));
-
-	return temp;
 }
 
 void initMatrix(double* AA, int* JA) {
@@ -106,20 +96,20 @@ void initMatrix(double* AA, int* JA) {
 	JA[rowSize + 1] = nonZero + 2;
 }
 
-void setX(FILE* fx, double* X) {
+void setX(FILE* fb, double* B) {
 	int i;
-	int row;
+	int row, col;
 	double val;
 
 	for (i = 0; i < vSize; i++) {
-		fscanf(fx, "%d %lf", &row, &val);
+		fscanf(fb, "%d %lf", &row, &val);
 		if (row < i) {
-			fseek(fx, -13, SEEK_CUR);
+			fseek(fb, -13, SEEK_CUR);
 			continue;
 		}
 
 
-		X[row] = val;
+		B[row] = val;
 	}
 }
 
@@ -156,30 +146,41 @@ void setMatrix(FILE* fa, double* AA, int* JA) {
 	}
 }
 
-void mmult(double* Y, double* AA, int* JA, double* X) {
-	int i, j, k;
-	double temp;
+void makeMB(double* AA, double* B, double* MB) {
+	int i;
 
 	for (i = 1; i < rowSize + 1; i++) {
-		// 대각성분과 X 벡터의 i index 곱
-		temp = AA[i] * X[i];
-		
-		// 나머지 성분과 X 벡터의 곱의 합
-		for (k = JA[i]; k < JA[i + 1]; k++) {
-			// j : A 행렬의 해당 원소 column 정보
-			j = JA[k];
-			temp += AA[k] * X[j];
-		}
-		Y[i] = temp;
+		// 대각 역행렬과 B 벡터의 i index 곱
+		MB[i] = (1 / AA[i]) * B[i];
+	}
+}
 
-		// min, max값과 index를 기록하여 최대 절대값 정보 구할 때 사용
-		if (Y[i] < min) {
-			min = Y[i];
-			minIdx = i;
+void jacobi(double* AA, int* JA, double* X, double* B, double* MB, double* err) {
+	int i, j, k;
+	double temp, temp2;
+
+	for (i = 1; i < rowSize + 1; i++) {
+		temp2 = X[i];
+		//대각 역행렬 * -triangle * 기존 x
+		temp = 0;
+		for (k = JA[i]; k < JA[i + 1]; k++) {
+			j = JA[k];
+			temp += (1 / AA[i]) * (-1 * X[j]);
 		}
-		if (Y[i] > max) {
-			max = Y[i];
-			maxIdx = i;
+		temp *= X[i];
+
+		X[i] = temp + MB[i];
+		err[i] = fabs((X[i] - temp2) / X[i]);
+	}
+}
+
+int check(double* err) {
+	int i;
+
+	for (i = 1; i < rowSize + 1; i++) {
+		if (err[i] > er) {
+			return 1;
 		}
 	}
+	return 0;
 }

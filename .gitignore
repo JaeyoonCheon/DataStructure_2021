@@ -342,6 +342,14 @@ healthchecksdb
 ./sparseMatrix/sparseMatrix.zip
 ./sparseMatrix/MatrixA.txt
 ./sparseMatrix/VectorX.txt
+./sparseMatrix/out.txt
+./sparseMatrix/aprox.txt
+./sparseMatrix/VectorB.txt
+/sparseMatrix/sparseMatrix.zip
 /sparseMatrix/MatrixA.txt
 /sparseMatrix/VectorX.txt
+/sparseMatrix/out.txt
+/sparseMatrix/aprox.txt
+/sparseMatrix/VectorB.txt
 *.zip
+/sparseMatrix/out - 복사본.txt

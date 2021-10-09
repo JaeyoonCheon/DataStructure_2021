@@ -139,7 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.c" />
+    <ClCompile Include="main.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="jacobi.c" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="in1.txt" />
@@ -147,6 +151,8 @@
     <Text Include="MatrixA.txt" />
     <Text Include="out.txt" />
     <Text Include="out_norm.txt" />
+    <Text Include="out_old.txt" />
+    <Text Include="VectorB.txt" />
     <Text Include="VectorX.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

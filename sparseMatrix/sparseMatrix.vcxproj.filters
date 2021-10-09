@@ -18,6 +18,9 @@
     <ClCompile Include="main.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="jacobi.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="in1.txt">
@@ -36,6 +39,12 @@
       <Filter>소스 파일</Filter>
     </Text>
     <Text Include="out_norm.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
+    <Text Include="VectorB.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
+    <Text Include="out_old.txt">
       <Filter>소스 파일</Filter>
     </Text>
   </ItemGroup>
