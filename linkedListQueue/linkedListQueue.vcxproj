@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{eb37bce3-68b0-45d8-a7aa-48a494cbcb5a}</ProjectGuid>
-    <RootNamespace>polynomial</RootNamespace>
+    <ProjectGuid>{dd2945f9-5718-4826-994e-64d99fb3df0f}</ProjectGuid>
+    <RootNamespace>linkedListQueue</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -140,11 +140,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\day6\a.txt" />
-    <Text Include="..\day6\b.txt" />
-    <Text Include="..\day6\c.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
