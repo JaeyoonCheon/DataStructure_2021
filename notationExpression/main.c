@@ -64,7 +64,7 @@ precedence getToken(char* symbol, int* n) {
 }
 
 //postfix 표현식의 결과 계산
-//stack을 이용하여 
+//stack을 이용하여 postfix식 계산
 int eval() {
 	precedence token;
 	char symbol;
@@ -72,12 +72,15 @@ int eval() {
 	int n = 0;
 	top = -1;
 	
+	//표현식의 가장 앞에서 부터의 글자를 하나 씩 받아 옴
 	token = getToken(&symbol, &n);
 
 	while (token != eos) {
+		// 피연산자의 경우, '0'을 빼고 저장하여 실제 숫자가 저장되도록 스택에 push
 		if (token == operand) {
 			push(symbol - '0');
 		}
+		// 연산자를 만난다면, 스택에서 피연산자 2개를 뽑아 해당 연산자로 두 피연산자를 계산 후 스택에 push
 		else {
 			op2 = pop();
 			op1 = pop();
@@ -101,6 +104,7 @@ int eval() {
 		}
 		token = getToken(&symbol, &n);
 	}
+	//마지막 스택에 남은 top은 모든 postfix식이 계산된 경우임
 	return pop();
 }
 
@@ -144,30 +148,40 @@ void postfix() {
 	precedence token;
 	int n = 0;
 
+	//가장 처음 스택에 eos를 넣어놓는다.
 	top = 0;
 	stack[0] = eos;
 
+	//앞에서부터 한 칸씩 뽑아서 postfix 문장의 끝까지 한 글자 씩 처리
 	for (token = getToken(&symbol, &n); token != eos; token = getToken(&symbol, &n)) {
+		// 피연산자의 경우 그대로 출력
 		if (token == operand) {
 			printf("%c", symbol);
 			postfixExpr[first++] = symbol;
 		}
+		// 오른쪽 괄호의 결우 스택에 저장된 원소들을 왼쪽 괄호가 나올떄 까지 pop
 		else if (token == rparen) {
 			while (stack[top] != lparen) {
 				printToken(pop());
 			}
+			//왼쪽 괄호도 뽑아 제거
 			pop();
 		}
+		//연산자의 경우, 현재 스택의 top에 있는 연산자와 비교하여 우선순위에 따라
+		//스택의 우선순위가 현재 토큰보다 낮아질 때 까지 pop하여 출력
 		else {
 			while (isp[stack[top]] >= icp[token]) {
 				printToken(pop());
 			}
+			//현재 토큰은 push
 			push(token);
 		}
 	}
+	//문장의 끝까지 도달했을 때 스택에 저장된 원소들을 pop하여 모두 출력
 	while ((token = pop()) != eos) {
 		printToken(token);
 	}
+	//마지막 \0 문자 추가
 	postfixExpr[first++] = '\0';
 	printf("\n");
 }
