@@ -6,36 +6,38 @@
 #include <memory.h>
 #include <math.h>
 
-
 #define MAX_SIZE 100
 
 int rowSize, colSize, vSize, nonZero, N = 0;
-double er = 0.000000000000001;
+double er = 0.1;
 void initMatrix(double*, int*);
 void setX(FILE*, double*);
 void setMatrix(FILE*, double*, int*);
-void makeMB(double*, double*, double*);
-void jacobi(double*, int*, double*, double*,double*, double*, double*);
+void mmult(double*, double*, double*, int*, double*, double*);
+void makeS(double*, int*, double*, double*, double*);
+double makeAlp(double*, double*);
+void steep(double*, double*, double*, double, double*);
 int check(double*);
 
 int main() {
 	FILE* fa, * fb, * fx, * output1, * output2;
 	int* ja;
-	double* aa, * b, * x, *x_old, * mb, *err;
+	double* aa, * b, * x, *x_old, * r, * z, * s, * err, * y;
 	int i, n;
+	double alp;
 
-	fa = fopen("test_A.txt", "r+");
-	fb = fopen("test_B.txt", "r+");
-	fx = fopen("test_X.txt", "r+");
-	output1 = fopen("out_j.txt", "w+");
-	output2 = fopen("aprox_j.txt", "w+");
+	fa = fopen("MatrixA.txt", "r+");
+	fb = fopen("VectorB.txt", "r+");
+	fx = fopen("VectorX.txt", "r+");
+	output1 = fopen("out.txt", "w+");
+	output2 = fopen("aprox.txt", "w+");
 
 	// A 행렬의 row, column, nonZero 갯수 입력
 	fscanf(fa, "%d %d %d", &rowSize, &colSize, &nonZero);
 
 	// nonZero+1 크기의 AA, JA 배열 동적할당(+1 -> 0 index 사용 x)
-	aa = (double*)calloc(nonZero + 2, sizeof(double));
-	ja = (int*)calloc(nonZero + 2, sizeof(int));
+	aa = (double*)calloc(nonZero + 1, sizeof(double));
+	ja = (int*)calloc(nonZero + 1, sizeof(int));
 
 	// AA, JA 배열 구성
 	setMatrix(fa, aa, ja);
@@ -56,10 +58,13 @@ int main() {
 	// X 배열 구성
 	setX(fx, x);
 
+	r = (double*)calloc(colSize + 1, sizeof(double));
+	z = (double*)calloc(colSize + 1, sizeof(double));
+	s = (double*)calloc(colSize + 1, sizeof(double));
+	y = (double*)calloc(colSize + 1, sizeof(double));
+
 	printf("input finished\n");
 
-	mb = (double*)calloc(colSize + 1, sizeof(double));
-	makeMB(aa, b, mb);
 
 	err = (double*)calloc(colSize + 1, sizeof(double));
 
@@ -67,14 +72,17 @@ int main() {
 	scanf("%d", &n);
 
 	for (i = 0; i < n; i++) {
-
-		jacobi(aa, ja, x, x_old, b, mb, err);
-		/*if (check(err) == 0) {
-			printf("iteration %d, error!\n", i+1);
+		mmult(y, b, aa, ja, x, r);
+		makeS(aa, ja, r, z, s);
+		alp = makeAlp(z, s);
+		printf("alpha : %lf\n", alp);
+		steep(x, x_old, z, alp, err);
+		if (check(err) == 0) {
+			printf("iteration %d,\n", i + 1);
 			break;
-		}*/
+		}
 	}
-	printf("jacobi method finished\n");
+	printf("steep method finished\n");
 
 	// index 1부터 파일에 출력
 	for (i = 1; i <= colSize; i++) {
@@ -100,7 +108,7 @@ void initMatrix(double* AA, int* JA) {
 
 void setX(FILE* fb, double* B) {
 	int i;
-	int row, col;
+	int row;
 	double val;
 
 	for (i = 0; i < vSize; i++) {
@@ -109,6 +117,7 @@ void setX(FILE* fb, double* B) {
 			fseek(fb, -13, SEEK_CUR);
 			continue;
 		}
+
 
 		B[row] = val;
 	}
@@ -126,11 +135,7 @@ void setMatrix(FILE* fa, double* AA, int* JA) {
 	initMatrix(AA, JA);
 
 	for (i = 0; i < nonZero; i++) {
-		fscanf(fa, "%d %d %lf", &row, &col, &val); 
-
-		if (JA[row] == 0) {
-			JA[row] = s;
-		}
+		fscanf(fa, "%d %d %lf", &row, &col, &val);
 
 		// row == col일 경우 대각성분을 먼저 1부터 저장
 		if (row == col) {
@@ -151,29 +156,66 @@ void setMatrix(FILE* fa, double* AA, int* JA) {
 	}
 }
 
-void makeMB(double* AA, double* B, double* MB) {
-	int i;
-
+void mmult(double* Y, double* B, double* AA, int* JA, double* X, double* R) {
+	int i, j, k;
+	double temp;
 	for (i = 1; i < rowSize + 1; i++) {
-		// 대각 역행렬과 B 벡터의 i index 곱
-		MB[i] = (1 / AA[i]) * B[i];
+		// 대각성분과 X 벡터의 i index 곱
+		temp = AA[i] * X[i];
+
+		// 나머지 성분과 X 벡터의 곱의 합
+		for (k = JA[i]; k < JA[i + 1]; k++) {
+			// j : A 행렬의 해당 원소 column 정보
+			j = JA[k];
+			temp += AA[k] * X[j];
+		}
+		Y[i] = temp;
+		R[i] = B[i] - Y[i];
 	}
 }
 
-void jacobi(double* AA, int* JA, double* X, double* X_OLD, double* B, double* MB, double* err) {
+void makeS(double* AA, int* JA, double* R, double* Z, double* S) {
 	int i, j, k;
 	double temp;
-	double temp2[10];
 
 	for (i = 1; i < rowSize + 1; i++) {
-		//대각 역행렬 * -triangle * 기존 x
-		temp = 0;
-		for (k = JA[i]; k < JA[i + 1]; k++) {
-			temp += (1 / AA[i]) * (-1 * AA[k]);
-		}
-		temp2[i] = temp;
+		// 대각 역행렬과 B 벡터의 i index 곱
+		Z[i] = (1 / AA[i]) * R[i];
+	}
 
-		X[i] = temp * X[i] + MB[i];
+	for (i = 1; i < rowSize + 1; i++) {
+		// 대각성분과 X 벡터의 i index 곱
+		temp = AA[i] * Z[i];
+
+		// 나머지 성분과 X 벡터의 곱의 합
+		for (k = JA[i]; k < JA[i + 1]; k++) {
+			// j : A 행렬의 해당 원소 column 정보
+			j = JA[k];
+			temp += AA[k] * Z[j];
+		}
+		S[i] = (1 / AA[i]) * temp;
+	}
+}
+
+double makeAlp(double* Z, double* S) {
+	int i;
+	double temp = 0, temp2 = 0;
+	double Alp;
+
+	for (i = 1; i < rowSize + 1; i++) {
+		temp += Z[i] * Z[i];
+		temp2 += S[i] * Z[i];
+	}
+	Alp = temp / temp2;
+
+	return Alp;
+}
+
+void steep(double* X, double* X_OLD, double* Z, double Alp, double* err) {
+	int i;
+
+	for (i = 1; i < rowSize + 1; i++) {
+		X[i] += Alp * Z[i];
 		err[i] = fabs((X[i] - X_OLD[i]) / X[i]);
 		X_OLD[i] = X[i];
 	}
@@ -183,7 +225,7 @@ int check(double* err) {
 	int i;
 
 	for (i = 1; i < rowSize + 1; i++) {
-		if (err[i] < er) {
+		if (err[i] > er) {
 			return 1;
 		}
 	}

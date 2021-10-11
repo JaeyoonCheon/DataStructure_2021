@@ -21,12 +21,15 @@
     <ClCompile Include="jacobi.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="steep.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="in1.txt">
+    <Text Include="a.txt">
       <Filter>소스 파일</Filter>
     </Text>
-    <Text Include="in2.txt">
+    <Text Include="x.txt">
       <Filter>소스 파일</Filter>
     </Text>
     <Text Include="out.txt">
@@ -45,6 +48,18 @@
       <Filter>소스 파일</Filter>
     </Text>
     <Text Include="out_old.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
+    <Text Include="b.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
+    <Text Include="test_A.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
+    <Text Include="test_B.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
+    <Text Include="test_X.txt">
       <Filter>소스 파일</Filter>
     </Text>
   </ItemGroup>
