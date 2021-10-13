@@ -72,8 +72,8 @@ precedence getToken(char* symbol, int* n) {
 	}
 }
 
-//postfix 표현식의 결과 계산
-//stack을 이용하여 postfix식 계산
+// postfix 표현식의 결과 계산
+// stack을 이용하여 postfix식 계산
 int eval() {
 	precedence token;
 	char symbol;
