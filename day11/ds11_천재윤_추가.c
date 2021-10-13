@@ -21,11 +21,11 @@ void printList(listPointer* first) {
 	listPointer pointer;
 	pointer = (*first);
 
-	while (pointer->link != NULL) {
+	while (pointer != NULL) {
 		printf("%d ", pointer->data);
 		pointer = pointer->link;
 	}
-	printf("%d", pointer->data);
+	//printf("%d", pointer->data);
 	printf("\n");
 }
 
@@ -42,7 +42,7 @@ void insert(listPointer* first, int _data) {
 
 	if (pointer) {
 		//추가하는 데이터가 first의 data보다 작을 때 앞에 추가
-		if (pointer->data >= _data) {
+		if (pointer->data > _data) {
 			temp->link = (*first);
 			(*first) = temp;
 		}
@@ -58,48 +58,6 @@ void insert(listPointer* first, int _data) {
 	}
 	else {
 		//linked list에 아무 node가 없는 경우
-		(*first) = temp;
-	}
-}
-
-void insertFirst(listPointer* first, int _data) {
-	listPointer	temp;
-
-	MALLOC(temp, sizeof(listPointer));
-	//temp = (listPointer)malloc(sizeof(listPointer));
-
-	temp->data = _data;
-	temp->link = NULL;
-
-	if (*first) {
-		temp->link = (*first);
-		(*first) = temp;
-	}
-	else {
-		(*first) = temp;
-	}
-}
-
-void insertLast(listPointer* first, int _data) {
-	listPointer	temp;
-	listPointer tail;
-
-	MALLOC(temp, sizeof(listPointer));
-	//temp = (listPointer)malloc(sizeof(listPointer));
-	temp->data = _data;
-	temp->link = NULL;
-
-	tail = (*first);
-
-	if (*first) {
-		while (tail->link != NULL) {
-			tail = tail->link;
-		}
-
-		temp->link = tail->link;
-		tail->link = temp;
-	}
-	else {
 		(*first) = temp;
 	}
 }
