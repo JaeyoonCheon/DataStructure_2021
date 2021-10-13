@@ -10,25 +10,26 @@
 #define MAX_SIZE 100
 
 int rowSize, colSize, vSize, nonZero, N = 0;
-double er = 0.01;
+double er = 0.00001;
 void initMatrix(double*, int*);
 void setX(FILE*, double*);
 void setMatrix(FILE*, double*, int*);
 void makeMB(double*, double*, double*);
+void jacobi_sequence(double*, int*, double*, double*, double*, double*);
 void jacobi(double*, int*, double*, double*, double*, double*);
 int check(double*);
 
 int main() {
 	FILE* fa, * fb, * fx, * output1, * output2;
 	int* ja;
-	double* aa, * b, * x, * mb, *err;
+	double* aa, * b, * x, * x_old, * mb, * err;
 	int i, n;
 
 	fa = fopen("MatrixA.txt", "r+");
-	fb = fopen("VectorX.txt", "r+");
-	fx = fopen("VectorB.txt", "r+");
-	output1 = fopen("out.txt", "w+");
-	output2 = fopen("aprox.txt", "w+");
+	fb = fopen("VectorB.txt", "r+");
+	fx = fopen("VectorX.txt", "r+");
+	output1 = fopen("out_jacobi.txt", "w+");
+	output2 = fopen("aprox_jacobi.txt", "w+");
 
 	// A 행렬의 row, column, nonZero 갯수 입력
 	fscanf(fa, "%d %d %d", &rowSize, &colSize, &nonZero);
@@ -51,14 +52,19 @@ int main() {
 	fscanf(fx, "%d", &vSize);
 	// colSize+1 크기의 X 배열 동적할당(+1 -> 0 index 사용 x)
 	x = (double*)calloc(colSize + 1, sizeof(double));
+	x_old = (double*)calloc(colSize + 1, sizeof(double));
 
 	// X 배열 구성
 	setX(fx, x);
 
+	for (i = 1; i <= vSize; i++) {
+		x_old[i] = x[i];
+	}
+
 	printf("input finished\n");
 
-	mb = (double*)calloc(colSize + 1, sizeof(double));
-	makeMB(aa, b, mb);
+	/*mb = (double*)calloc(colSize + 1, sizeof(double));
+	makeMB(aa, b, mb);*/
 
 	err = (double*)calloc(colSize + 1, sizeof(double));
 
@@ -66,21 +72,22 @@ int main() {
 	scanf("%d", &n);
 
 	for (i = 0; i < n; i++) {
-		jacobi(aa, ja, x, b, mb, err);
+		//jacobi(aa, ja, x, b, mb, err);
+		jacobi_sequence(aa, ja, x, b, x_old, err);
 		if (check(err) == 0) {
-			printf("iteration %d, error!\n", i+1);
+			printf("iteration %d, error!\n", i + 1);
 			break;
 		}
 	}
 	printf("jacobi method finished\n");
 
 	// index 1부터 파일에 출력
-	for (i = 1; i < colSize; i++) {
+	for (i = 1; i <= colSize; i++) {
 		fprintf(output1, "%e\n", x[i]);
 	}
 
 	// index 1부터 파일에 출력
-	for (i = 1; i < colSize; i++) {
+	for (i = 1; i <= colSize; i++) {
 		fprintf(output2, "%e\n", err[i]);
 	}
 
@@ -127,6 +134,9 @@ void setMatrix(FILE* fa, double* AA, int* JA) {
 	for (i = 0; i < nonZero; i++) {
 		fscanf(fa, "%d %d %lf", &row, &col, &val);
 
+		if (JA[row] == 0)
+			JA[row] = s;
+
 		// row == col일 경우 대각성분을 먼저 1부터 저장
 		if (row == col) {
 			AA[t] = val;
@@ -152,6 +162,25 @@ void makeMB(double* AA, double* B, double* MB) {
 	for (i = 1; i < rowSize + 1; i++) {
 		// 대각 역행렬과 B 벡터의 i index 곱
 		MB[i] = (1 / AA[i]) * B[i];
+	}
+}
+
+void jacobi_sequence(double* AA, int* JA, double* X, double* B, double* X_OLD, double* err) {
+	int i, j, k;
+	double temp, temp2;
+
+	for (i = 1; i < rowSize + 1; i++) {
+		temp2 = X_OLD[i];
+		//대각 역행렬 * -triangle * 기존 x
+		temp = 0;
+		for (k = JA[i]; k < JA[i + 1]; k++) {
+			j = JA[k];
+			temp += AA[k] * X_OLD[j];
+		}
+
+		X[i] = (1 / AA[i]) * (B[i] - temp);
+		err[i] = fabs((X[i] - X_OLD[i]) / X[i]);
+		X_OLD[i] = X[i];
 	}
 }
 

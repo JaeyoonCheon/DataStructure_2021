@@ -47,5 +47,14 @@
     <Text Include="out_old.txt">
       <Filter>소스 파일</Filter>
     </Text>
+    <Text Include="testX.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
+    <Text Include="testA.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
+    <Text Include="testB.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
   </ItemGroup>
 </Project>

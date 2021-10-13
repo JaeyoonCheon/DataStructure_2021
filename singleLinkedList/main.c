@@ -29,6 +29,19 @@ void printList(listPointer* first) {
 	printf("\n");
 }
 
+listPointer invert(listPointer* first) {
+	listPointer middle, trail;
+	middle = NULL;
+
+	while (*first) {
+		trail = middle;
+		middle = (*first);
+		(*first) = (*first)->link;
+		middle->link = trail;
+	}
+	return middle;
+}
+
 void delete(listPointer* first, int _data) {
 	listPointer front = NULL;
 	listPointer pointer;
@@ -151,6 +164,7 @@ void sortedList() {
 void unSortedList() {
 	FILE* fp;
 	listPointer list = NULL;
+	listPointer invList = NULL;
 	char dir[5];
 	int data;
 	int x;
@@ -181,17 +195,25 @@ void unSortedList() {
 	while (1) {
 		printf("Input data at head or tail // Delete data? head/tail/del : ");
 		scanf("%s", dir);
-		getchar();
-		scanf("%d", &x);
 
 		if (!strcmp(dir, "head")) {
+			getchar();
+			scanf("%d", &x);
 			insertFirst(&list, x);
 		}
 		else if (!strcmp(dir, "tail")) {
+			getchar();
+			scanf("%d", &x);
 			insertLast(&list, x);
 		}
 		else if (!strcmp(dir, "del")) {
+			getchar();
+			scanf("%d", &x);
 			delete(&list, x);
+		}
+		else if (!strcmp(dir, "invert")) {
+			getchar();
+			list = invert(&list);
 		}
 		else {
 			return;
