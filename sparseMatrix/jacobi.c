@@ -6,8 +6,9 @@
 #include <memory.h>
 #include <math.h>
 
-
 #define MAX_SIZE 100
+
+typedef stru
 
 int rowSize, colSize, vSize, nonZero, N = 0;
 double er = 0.00001;
@@ -16,7 +17,6 @@ void setX(FILE*, double*);
 void setMatrix(FILE*, double*, int*);
 void makeMB(double*, double*, double*);
 void jacobi_sequence(double*, int*, double*, double*, double*, double*);
-void jacobi(double*, int*, double*, double*, double*, double*);
 int check(double*);
 
 int main() {
@@ -178,25 +178,6 @@ void jacobi_sequence(double* AA, int* JA, double* X, double* B, double* X_OLD, d
 		}
 
 		X[i] = (1 / AA[i]) * (B[i] - temp);
-		err[i] = fabs((X[i] - X_OLD[i]) / X[i]);
-		X_OLD[i] = X[i];
-	}
-}
-
-void jacobi(double* AA, int* JA, double* X, double* B, double* MB, double* err) {
-	int i, j, k;
-	double temp;
-	double temp2[10];
-
-	for (i = 1; i < rowSize + 1; i++) {
-		//대각 역행렬 * -triangle * 기존 x
-		temp = 0;
-		for (k = JA[i]; k < JA[i + 1]; k++) {
-			temp += (1 / AA[i]) * (-1 * AA[k]);
-		}
-		temp2[i] = temp;
-
-		X[i] = temp * X[i] + MB[i];
 		err[i] = fabs((X[i] - X_OLD[i]) / X[i]);
 		X_OLD[i] = X[i];
 	}

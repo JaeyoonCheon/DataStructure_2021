@@ -15,50 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.c">
+    <ClCompile Include="ds12_천재윤.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="jacobi.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="steep.c">
+    <ClCompile Include="ds12_천재윤_추가.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="a.txt">
+    <Text Include="in.txt">
       <Filter>소스 파일</Filter>
     </Text>
-    <Text Include="x.txt">
-      <Filter>소스 파일</Filter>
-    </Text>
-    <Text Include="out.txt">
-      <Filter>소스 파일</Filter>
-    </Text>
-    <Text Include="MatrixA.txt">
-      <Filter>소스 파일</Filter>
-    </Text>
-    <Text Include="VectorX.txt">
-      <Filter>소스 파일</Filter>
-    </Text>
-    <Text Include="out_norm.txt">
-      <Filter>소스 파일</Filter>
-    </Text>
-    <Text Include="VectorB.txt">
-      <Filter>소스 파일</Filter>
-    </Text>
-    <Text Include="out_old.txt">
-      <Filter>소스 파일</Filter>
-    </Text>
-    <Text Include="testX.txt">
-      <Filter>소스 파일</Filter>
-    </Text>
-    <Text Include="testA.txt">
-      <Filter>소스 파일</Filter>
-    </Text>
-    <Text Include="testB.txt">
-      <Filter>소스 파일</Filter>
-    </Text>
-    <Text Include="b.txt" />
   </ItemGroup>
 </Project>
