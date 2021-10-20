@@ -26,6 +26,10 @@ void insertData(treePointer* node, int n) {
 	treePointer temp;
 
 	temp = (treePointer)malloc(sizeof(node));
+	if (temp == NULL) {
+		fprintf(stderr, "malloc error");
+		exit(1);
+	}
 	temp->data = n;
 	temp->leftChild = NULL;
 	temp->rightChild = NULL;
