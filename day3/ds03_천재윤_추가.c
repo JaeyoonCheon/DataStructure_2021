@@ -76,7 +76,7 @@ int main() {
 		//recursive binary search
 		start = clock();
 		printf("Recursive: ");
-		if ((result = bsRecusive(arr, key, lo, hi)) == -1)
+		if ((result = bsRecursive(arr, key, lo, hi)) == -1)
 			printf("Fail ");
 		else
 			printf("%d ", result);
@@ -126,7 +126,7 @@ int bsIterative(char* arr, char key, int lo, int hi) {
 }
 
 //recursive binary search
-int bsRecusive(char* arr, char key, int lo, int hi) {
+int bsRecursive(char* arr, char key, int lo, int hi) {
 	int mid = (lo + hi) / 2;
 	//printf("%c %d %d\n", arr[mid], (int)arr[mid], (int)key);
 	if (arr[mid] == key) {
@@ -136,9 +136,9 @@ int bsRecusive(char* arr, char key, int lo, int hi) {
 		return -1;
 	}
 	if ((int)arr[mid] > (int)key) {
-		return bsRecusive(arr, key, lo, mid - 1);
+		return bsRecursive(arr, key, lo, mid - 1);
 	}
 	if ((int)arr[mid] < (int)key) {
-		return bsRecusive(arr, key, mid + 1, hi);
+		return bsRecursive(arr, key, mid + 1, hi);
 	}
 }
