@@ -8,7 +8,10 @@
 
 #define MAX_SIZE 100
 
-typedef stru
+typedef struct matrixForm {
+	double* aa;
+	int* ja;
+}matrixForm;
 
 int rowSize, colSize, vSize, nonZero, N = 0;
 double er = 0.00001;
@@ -77,7 +80,7 @@ int main() {
 		if (check(err) == 0) {
 			printf("iteration %d, error!\n", i + 1);
 			break;
-		}*/
+		}
 	}
 	printf("jacobi method finished\n");
 
