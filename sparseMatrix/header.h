@@ -14,5 +14,5 @@ typedef struct vectorForm {
 
 vectorForm* setVector(FILE*, int*, int);
 matrixForm* setMatrix(FILE*, int*, int*, int*);
-void mmult(matrixForm*, vectorForm*, vectorForm*, int, int*, int*, int*, int*);
-int normEval(vectorForm*, int);
+void mmult(matrixForm*, vectorForm*, vectorForm*, int, int*, int*, double*, double*);
+double normEval(vectorForm*, int);

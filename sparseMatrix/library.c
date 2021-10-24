@@ -7,14 +7,14 @@
 #include <math.h>
 #include "header.h"
 
-vectorForm* setVector(FILE* fp, int *vSize, int colSize) {
+vectorForm* setVector(FILE* fp, int* vSize, int colSize) {
 	int i;
 	int row;
 	double val;
 	vectorForm* vector;
 
 	// X 벡터의 크기 입력 = A 행렬의 column 길이와 동일
-	if (!fscanf(fp, "%d", &vSize)) {
+	if (!fscanf(fp, "%d", vSize)) {
 		fprintf(stderr, "reading error\n");
 		exit(1);
 	}
@@ -30,7 +30,7 @@ vectorForm* setVector(FILE* fp, int *vSize, int colSize) {
 		exit(1);
 	}
 
-	for (i = 0; i < vSize; i++) {
+	for (i = 0; i < (*vSize); i++) {
 		if (!fscanf(fp, "%d %lf", &row, &val)) {
 			fprintf(stderr, "read error!\n");
 			exit(1);
@@ -44,13 +44,12 @@ vectorForm* setVector(FILE* fp, int *vSize, int colSize) {
 	return vector;
 }
 
-matrixForm* setMatrix(FILE* fp, int *rowSize, int *colSize, int *nonZero) {
+matrixForm* setMatrix(FILE* fp, int* rowSize, int* colSize, int* nonZero) {
 	// t : 대각성분 저장 시작점, s : 나머지 희소성분 저장 시작점
 	int i;
 	int row, col;
 	double val;
-	int t = 1, s = *colSize + 2;
-	int size = *nonZero + 1;
+	int t = 1, s, size;
 	matrixForm* matrixSet;
 
 	// A 행렬의 row, column, nonZero 갯수 입력
@@ -58,6 +57,9 @@ matrixForm* setMatrix(FILE* fp, int *rowSize, int *colSize, int *nonZero) {
 		fprintf(stderr, "reading error\n");
 		exit(1);
 	}
+
+	s = (*colSize) + 2;
+	size = (*nonZero) + 1;
 
 	if (!(matrixSet = (matrixForm*)malloc(sizeof(matrixForm)))) {
 		fprintf(stderr, "allocation error\n");
@@ -69,7 +71,7 @@ matrixForm* setMatrix(FILE* fp, int *rowSize, int *colSize, int *nonZero) {
 		fprintf(stderr, "allocation error\n");
 		exit(1);
 	}
-	if (!(matrixSet->ja = (double*)calloc(*nonZero + 1, sizeof(double)))) {
+	if (!(matrixSet->ja = (int*)calloc(*nonZero + 1, sizeof(int)))) {
 		fprintf(stderr, "allocation error\n");
 		exit(1);
 	}
@@ -105,7 +107,7 @@ matrixForm* setMatrix(FILE* fp, int *rowSize, int *colSize, int *nonZero) {
 	return matrixSet;
 }
 
-void mmult(matrixForm *matrixSet, vectorForm* Y, vectorForm* X, int rowSize, int* minIdx, int* maxIdx, int* min, int* max) {
+void mmult(matrixForm* matrixSet, vectorForm* Y, vectorForm* X, int rowSize, int* minIdx, int* maxIdx, double* min, double* max) {
 	int i, j, k;
 	double temp;
 
@@ -133,12 +135,15 @@ void mmult(matrixForm *matrixSet, vectorForm* Y, vectorForm* X, int rowSize, int
 	}
 }
 
-int normEval(vectorForm* vector, int colSize) {
-	int i, norm = 0;
-	for (i = 1; i <= colSize; i++) {
+double normEval(vectorForm* vector, int vSize) {
+	int i;
+	double norm = 0.0;
+	for (i = 1; i <= vSize; i++) {
 		norm += powf(vector->val[i], 2);
 	}
 
 	// norm 계산
 	norm = sqrtf(norm);
+
+	return norm;
 }
