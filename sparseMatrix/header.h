@@ -16,3 +16,4 @@ vectorForm* setVector(FILE*, int*, int);
 matrixForm* setMatrix(FILE*, int*, int*, int*);
 void mmult(matrixForm*, vectorForm*, vectorForm*, int, int*, int*, double*, double*);
 double normEval(vectorForm*, int);
+void jacobi_sequence(matrixForm*, vectorForm*, vectorForm*, vectorForm*, vectorForm*, int);

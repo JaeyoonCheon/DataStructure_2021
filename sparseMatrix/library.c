@@ -147,3 +147,22 @@ double normEval(vectorForm* vector, int vSize) {
 
 	return norm;
 }
+
+void jacobi_sequence(matrixForm* matrixSet, vectorForm* X, vectorForm* B, vectorForm* X_OLD, vectorForm* err, int rowSize) {
+	int i, j, k;
+	double temp, temp2;
+
+	for (i = 1; i < rowSize + 1; i++) {
+		temp2 = X_OLD->val[i];
+		//대각 역행렬 * -triangle * 기존 x
+		temp = 0;
+		for (k = matrixSet->ja[i]; k < matrixSet->ja[i + 1]; k++) {
+			j = matrixSet->ja[k];
+			temp += matrixSet->aa[k] * X_OLD->val[j];
+		}
+
+		X->val[i] = (1 / matrixSet->aa[i]) * (B->val[i] - temp);
+		err->val[i] = fabs((X->val[i] - X_OLD->val[i]) / X->val[i]);
+		X_OLD->val[i] = X->val[i];
+	}
+}
