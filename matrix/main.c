@@ -22,7 +22,7 @@ int main() {
 	int n, i;
 	term* A, * B, * C, * D;
 
-	if (!(in = fopen("in.txt", "r")))
+	if (!(in = fopen("test.txt", "r")))
 		perror("read file error!");
 	if (!(fscanf(in, "%d", &n)))
 		perror("read term size error!");

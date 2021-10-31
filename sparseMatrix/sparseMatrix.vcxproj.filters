@@ -65,6 +65,15 @@
     <Text Include="b.txt">
       <Filter>소스 파일</Filter>
     </Text>
+    <Text Include="8W.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
+    <Text Include="8X.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
+    <Text Include="8x8A.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header.h">
