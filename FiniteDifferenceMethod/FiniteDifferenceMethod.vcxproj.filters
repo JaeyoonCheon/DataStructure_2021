@@ -15,7 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.c">
+    <ClCompile Include="FDM1.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FDM2.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

@@ -69,21 +69,24 @@ int main() {
 		exit(1);
 	}
 
-	//for (i = 0; i < n; i++) {
-	//	mmult(matrixSet, result, X, rowSize, &minIdx, &maxIdx, &min, &min);
-	//	temp1 = 0.0;
-	//	temp2 = 0.0;
+	/* power method
+	for (i = 0; i < n; i++) {
+		mmult(matrixSet, result, X, rowSize, &minIdx, &maxIdx, &min, &min);
+		temp1 = 0.0;
+		temp2 = 0.0;
 
-	//	for (j = 1; j <= vSize; j++) {
-	//		X_OLD->val[j] = X->val[j];
+		for (j = 1; j <= vSize; j++) {
+			X_OLD->val[j] = X->val[j];
 
-	//		X->val[j] = 1 / lambda1 * result->val[j];
-	//		temp1 += W->val[j] * X->val[j];
-	//		temp2 += W->val[j] * X_OLD->val[j];
-	//	}
-	//	lambda1 = lambda1 * temp1 / temp2;
-	//}
+			X->val[j] = 1 / lambda1 * result->val[j];
+			temp1 += W->val[j] * X->val[j];
+			temp2 += W->val[j] * X_OLD->val[j];
+		}
+		lambda1 = lambda1 * temp1 / temp2;
+	}
+	*/
 
+	/* inverse power method with jacobi method
 	for (i = 0; i < n; i++) {
 		for (j = 0; j <= vSize; j++) {
 			X_lambda->val[j] = X->val[j] * lambda2;
@@ -100,6 +103,7 @@ int main() {
 		}
 		lambda2 = lambda2 * temp2 / temp1;
 	}
+	*/
 
 	printf("iteration %d, lambda : %e\n", i, lambda1);
 	printf("iteration %d, lambda : %e\n", i, lambda2);
