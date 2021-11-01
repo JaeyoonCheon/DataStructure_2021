@@ -30,9 +30,9 @@ void push(treePointer ptr) {
 }
 
 treePointer pop() {
-	//if (top < 0) {
-	//	stackEmpty();
-	//}
+	if (top < 0) {
+		return NULL;
+	}
 	return stack[top--];
 }
 
