@@ -14,7 +14,7 @@ typedef struct matrixForm {
 }matrixForm;
 
 int rowSize, colSize, vSize, nonZero, N = 0;
-double er = 0.00001;
+double er = 0.001;
 void initMatrix(double*, int*);
 void setX(FILE*, double*);
 void setMatrix(FILE*, double*, int*);
