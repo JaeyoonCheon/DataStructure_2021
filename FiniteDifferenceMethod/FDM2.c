@@ -2,24 +2,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#define MAX_ERR 0.00000000001
 
-#define MAX_ERR 0.00001
-//double k[i] = 2.3 + 2.25 * 10^5 / T[i] * exp(-12410 / T[i]) /* 0~29*/ , k2[i] = 12.767 - 5.4348 * 10^-4 * T[i] - 8.9818 * 10^-6 * T[i]^2 ;/* 30~32*/ => 어떻게 구현할지 (T를 구해야하는데 T가 식에 포함됨)  
-//double r[i] = h1 / 2 + h1 * i, /* 0~29*/ r[i] = h1 / 2 + h1 * 29 + h2 * [i-29]; /* 30~32*/
-//double v[0] = r[0]^2 / 2, v[i] = (r[i]^2 - r[i-1]^2) / 2;
-
-//const
 double h1, h2, q1, q2, Tr;
 
 void initConst(double* R, double* V, double* B) {
     int i;
 
-    for (i = 0; i < 33; i++) {
+    for (i = 0; i < 34; i++) {
         if (i < 30) {
             R[i] = h1 / 2 + h1 * i;
         }
         else {
-            R[i] = h1 / 2 + h1 * 29 + h2 * (i - 29);
+            R[i] = h1 / 2 + h1 * 29 + (h1 + h2) / 2 + h2 * (i - 30);
         }
 
         if (i == 0) {
@@ -34,12 +29,12 @@ void initConst(double* R, double* V, double* B) {
 void kConst(double* K, double* X) {
     int i;
 
-    for (i = 0; i < 33; i++) {
+    for (i = 0; i < 34; i++) {
         if (i < 30) {
             K[i] = 2.3 + 2.25 * powf(10, 5) / X[i] * exp(-12410 / X[i]);
         }
         else {
-            K[i] = 12.767 - 5.4348 * powf(10, -4) * X[i] - 8.9818 * powf(10, -6) * powf(X[i], 2);
+            K[i] = 12.767 - 5.4348 * powf(10, -4) * X[i] + 8.9818 * powf(10, -6) * powf(X[i], 2);
         }
     }
 }
@@ -48,7 +43,7 @@ void makeMatrix(double** matrix, double* X, double* R, double* K, double* B, dou
     int i;
     double expq, step;
 
-    for (i = 0; i < 33; i++) {
+    for (i = 0; i < 34; i++) {
         if (i == 0) {
             matrix[i][1] = K[i] * R[i] / h1;
             matrix[i][2] = -1 * K[i] * R[i] / h1;
@@ -58,7 +53,7 @@ void makeMatrix(double** matrix, double* X, double* R, double* K, double* B, dou
             matrix[i][0] = -1 * K[i] * R[i] / h1;
             matrix[i][1] = (K[i] * R[i] / h1 + K[i] * R[i] / h2);
             matrix[i][2] = -1 * K[i] * R[i] / h2;
-            B[i] = (q1 * V[i - 1]) / 2 + q2 * ((powf(R[i], 2) - powf((R[i - 1] - h1), 2)) / 2) / 2;
+            B[i] = (q1 * V[i - 1]) / 2 + q2 * (V[i]) / 2;
             continue;
         }
         if (i < 30) {
@@ -75,20 +70,20 @@ void makeMatrix(double** matrix, double* X, double* R, double* K, double* B, dou
         B[i] = expq * V[i];
     }
     matrix[0][0] = 0;
-    matrix[32][2] = 0;
-    B[32] += K[32] * R[32] / h2 * Tr;
+    matrix[33][2] = 0;
+    B[33] += K[33] * R[33] / h2 * Tr;
 }
 
 void jacobi_sequence(double** matrix, double* X, double* B, double* X_OLD) {
     int i;
     double temp;
 
-    for (i = 0; i < 33; i++) {
+    for (i = 0; i < 34; i++) {
         temp = matrix[i][0] * X_OLD[i - 1] + matrix[i][2] * X_OLD[i + 1];
         if (i == 0) {
             temp = matrix[i][2] * X_OLD[i + 1];
         }
-        if (i == 32) {
+        if (i == 33) {
             temp = matrix[i][0] * X_OLD[i - 1];
         }
 
@@ -105,23 +100,23 @@ int main() {
     double* B, * X, * K, * R, * V, * X_OLD;
 
     h1 = 0.413 * powf(10, -2) / 30;
-    h2 = 0.635 * powf(10, -3);
-    q1 = 300.0 * powf(10, 3), q2 = 0;
-    Tr = 310.0 + 273.0;
+    h2 = 0.635 * powf(10, -3) / 3;
+    q1 = 300.0 * powf(10, 6), q2 = 0;
+    Tr = 310.0;
 
-    matrix = (double**)malloc(sizeof(double*) * 33);
-    for (i = 0; i < 33; i++) {
+    matrix = (double**)malloc(sizeof(double*) * 34);
+    for (i = 0; i < 34; i++) {
         matrix[i] = (double*)calloc(3, sizeof(double));
     }
 
-    B = (double*)calloc(33, sizeof(double));
-    X = (double*)calloc(33, sizeof(double));
-    X_OLD = (double*)calloc(33, sizeof(double));
-    K = (double*)calloc(33, sizeof(double));
-    R = (double*)calloc(33, sizeof(double));
-    V = (double*)calloc(33, sizeof(double));
+    B = (double*)calloc(34, sizeof(double));
+    X = (double*)calloc(34, sizeof(double));
+    X_OLD = (double*)calloc(34, sizeof(double));
+    K = (double*)calloc(34, sizeof(double));
+    R = (double*)calloc(34, sizeof(double));
+    V = (double*)calloc(34, sizeof(double));
 
-    for (i = 0; i < 33; i++) {
+    for (i = 0; i < 34; i++) {
         X[i] = 1.0;
         X_OLD[i] = 1.0;
     }
@@ -134,7 +129,7 @@ int main() {
         kConst(K, X);
         makeMatrix(matrix, X, R, K, B, V);
         jacobi_sequence(matrix, X, B, X_OLD);
-        for (j = 0; j < 33; j++) {
+        for (j = 0; j < 34; j++) {
             err = (X[j] - X_OLD[j]) / X[j];
             if (err > MAX_ERR) {
                 flag = 1;
@@ -142,7 +137,7 @@ int main() {
             }
         }
         if (flag == 1) {
-            for (j = 0; j < 33; j++) {
+            for (j = 0; j < 34; j++) {
                 X_OLD[j] = X[j];
             }
         }
@@ -151,9 +146,9 @@ int main() {
             break;
         }
         i++;
-    }
+    } 
 
-    for (i = 0; i < 33; i++) {
+    for (i = 0; i < 34; i++) {
         for (j = 0; j < 3; j++) {
             printf("%.3f ", matrix[i][j]);
         }
@@ -161,14 +156,14 @@ int main() {
     }
 
     printf("\nB vector\n");
-    for (i = 0; i < 33; i++) {
+    for (i = 0; i < 34; i++) {
         printf("%.3f\n", B[i]);
     }
 
     printf("\n%d iteration\n", i);
 
     printf("\nX vector\n");
-    for (i = 0; i < 33; i++) {
+    for (i = 0; i < 34; i++) {
         printf("%.3f\n", X[i]);
     }
 }
