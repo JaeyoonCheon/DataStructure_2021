@@ -31,14 +31,46 @@ double** initMatrix(double** A, double** B, double** C, double** D, double** E, 
 {
 	int i, j;
 
-	for (i = 1; i < 21; i++) {
-		for (j = 1; j < 21; j++) {
-			A[i][j] = -(k[i - 1][j - 1] * DX + k[i][j - 1] * DX) / (2 * DY);
-			B[i][j] = -(k[i - 1][j - 1] * DX + k[i - 1][j] * DX) / (2 * DY);
-			D[i][j] = -(k[i][j - 1] * DX + k[i][j] * DX) / (2 * DY);
-			E[i][j] = -(k[i - 1][j] * DX + k[i][j] * DX) / (2 * DY);
-			C[i][j] = -(A[i][j] + B[i][j] + D[i][j] + E[i][j]);
-			Q[i][j] = (q[i - 1][j - 1] + q[i][j - 1] + q[i - 1][j] + q[i][j]) * (DX / 2 * DY / 2);
+	for (i = 0; i < 21; i++) {
+		if (i == 0) {
+			for (j = 0; j < 21; j++) {
+				// x == 0, y == 0
+				if (j == 0) {
+					D[i][j] = -(k[i][j] * DY) / (2 * DX);
+					E[i][j] = -(k[i][j] * DX) / (2 * DY);
+					C[i][j] = -(D[i][j] + E[i][j]);
+					Q[i][j] = q[i][j] * (DX / 2 * DY / 2);
+				}
+				// x == 0
+				else {
+					A[i][j] = -(k[i][j - 1] * DX) / (2 * DY);
+					B[i][j] = 0;
+					D[i][j] = -(k[i][j - 1] * DX + k[i][j] * DX) / (2 * DY);
+					E[i][j] = -(k[i][j] * DX) / (2 * DY);
+					C[i][j] = -(A[i][j] + B[i][j] + D[i][j] + E[i][j]);
+					Q[i][j] = (q[i][j - 1] + q[i][j]) * (DX / 2 * DY / 2);
+				}
+			}
+		}
+		else {
+			for (j = 0; j < 21; j++) {
+				// y == 0
+				if (j == 0) {
+					B[i][j] = -(k[i - 1][j] * DY) / (2 * DX);
+					D[i][j] = -(k[i][j] * DY) / (2 * DX);
+					E[i][j] = -(k[i - 1][j] * DX + k[i][j]*DX) / (2 * DY);
+					C[i][j] = -(B[i][j] + D[i][j] + E[i][j]);
+					Q[i][j] = (q[i - 1][j] + q[i][j]) * (DX / 2 * DY / 2);
+				}
+				else {
+					A[i][j] = -(k[i - 1][j - 1] * DX + k[i][j - 1] * DX) / (2 * DY);
+					B[i][j] = -(k[i - 1][j - 1] * DX + k[i - 1][j] * DX) / (2 * DY);
+					D[i][j] = -(k[i][j - 1] * DX + k[i][j] * DX) / (2 * DY);
+					E[i][j] = -(k[i - 1][j] * DX + k[i][j] * DX) / (2 * DY);
+					C[i][j] = -(A[i][j] + B[i][j] + D[i][j] + E[i][j]);
+					Q[i][j] = (q[i - 1][j - 1] + q[i][j - 1] + q[i - 1][j] + q[i][j]) * (DX / 2 * DY / 2);
+				}
+			}
 		}
 	}
 }
@@ -108,8 +140,14 @@ int main() {
 	}
 
 	for (i = 0; i < 21; i++) {
-		for (j = 0; j < 21; j++) {
-			matrix[i][j] =
+		// 상부 경계
+		T[i][20] = 50.0 - 10.0 * powf(i, 2);
+
+		// 우측 경계
+		if (i == 20) {
+			for (j = 0; j < 21; j++) {
+				T[i][j] = 40.0;
+			}
 		}
 	}
 
