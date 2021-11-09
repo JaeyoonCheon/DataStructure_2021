@@ -68,7 +68,7 @@ treePointer minSearch(treePointer root) {
 
 	trail = root;
 
-	while (!trail->leftChild) {
+	while (trail->leftChild) {
 		trail = trail->leftChild;
 	}
 	return trail;
@@ -125,6 +125,7 @@ void parentSearch(treePointer* root, int key, treePointer* parent) {
 }
 
 void delete(treePointer* node, int k) {
+	int minVal;
 	treePointer parent, curr, child, tempVal;
 
 	parent = NULL;
@@ -135,9 +136,10 @@ void delete(treePointer* node, int k) {
 	if (curr == NULL)
 		return;
 
-	if (!(*node)->leftChild && !(*node)->rightChild) {
+	// no child
+	if (!curr->leftChild && !curr->rightChild) {
 		if (curr != (*node)) {
-			if (parent->leftChild == (*node))
+			if (parent->leftChild == curr)
 				parent->leftChild = NULL;
 			else
 				parent->rightChild = NULL;
@@ -147,13 +149,16 @@ void delete(treePointer* node, int k) {
 		}
 		free(curr);
 	}
-	else if ((*node)->rightChild && (*node)->leftChild) {
-		tempVal = minSearch((*node)->rightChild);
+	// 2 child
+	else if (curr->rightChild && curr->leftChild) {
+		tempVal = minSearch(curr->rightChild);
+		minVal = tempVal->key;
 
-		delete(node, tempVal->key);
+		delete(&(*node), tempVal->key);
 
-		(*node)->key = tempVal->key;
+		curr->key = minVal;
 	}
+	//1 child
 	else {
 		if (curr->leftChild)
 			child = curr->leftChild;
