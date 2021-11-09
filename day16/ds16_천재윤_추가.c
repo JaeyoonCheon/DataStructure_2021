@@ -131,12 +131,16 @@ void delete(treePointer* node, int k) {
 	parent = NULL;
 	curr = *node;
 
+	// key가 root인 트리 curr과 curr의 부모인 트리 parent를 가져옴
 	parentSearch(&curr, k, &parent);
 
+	/*curr에서 최솟값을 더 이상 찾아낼 수 없는 상태
+	즉, leaf까지 교환 완료한 경우 재귀 반환*/
 	if (curr == NULL)
 		return;
 
-	// no child
+	/*1. curr의 자식 node가 하나도 없는 경우:
+	parent의 curr과 연결된 link를 끊고 curr을 삭제*/
 	if (!curr->leftChild && !curr->rightChild) {
 		if (curr != (*node)) {
 			if (parent->leftChild == curr)
@@ -149,7 +153,14 @@ void delete(treePointer* node, int k) {
 		}
 		free(curr);
 	}
-	// 2 child
+	/*2. curr의 자식 node가 2개인 경우:
+	* 조건이 오른쪽 subtree에서 가장 작은 값을 root value로 하도록 설정
+	해당 값을 찾고, 그 값이 현재 curr의 root value가 될 것이기 때문에
+	아래쪽에 동일한 해당 값이 존재할 것.
+	따라서 해당 값을 트리에서 동일한 삭제 과정을 거쳐줌으로써
+	해당 값을 가진 노드를 삭제하는 연산과정을 재귀호출 해준다.
+	이후, subtree 상에 해당 값을 가진 node가 없으므로,
+	현재 curr의 root value에 해당 값을 삽입한다.*/
 	else if (curr->rightChild && curr->leftChild) {
 		tempVal = minSearch(curr->rightChild);
 		minVal = tempVal->key;
@@ -158,7 +169,12 @@ void delete(treePointer* node, int k) {
 
 		curr->key = minVal;
 	}
-	//1 child
+	/*3. curr의 자식 node가 1개인 경우:
+	1개인 자식 tree를 가지고 와서
+	curr이 root 트리인 경우(삭제하려는 key가 root이면서 자식이 1개)
+	root 트리를 자식 트리로 교체
+	curr이 root 트리가 아닌 경우에는 parent의 curr과 연결된 link가
+	child를 가리키도록 하고 curr을 삭제한다.*/
 	else {
 		if (curr->leftChild)
 			child = curr->leftChild;
