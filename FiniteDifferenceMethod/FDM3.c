@@ -27,10 +27,11 @@ void jacobi_sequence(double** matrix, double* X, double* B, double* X_OLD) {
 	}
 }
 
-double** initMatrix(double** A, double** B, double** C, double** D, double** E, double** Q, double** k, double** q)
+double** initMatrix(double** A, double** B, double** C, double** D, double** E, double* Q, double** k, double** q, double** matrix)
 {
-	int i, j;
+	int i, j, m, n;
 
+	// A, B, C, D, E
 	for (i = 0; i < 21; i++) {
 		if (i == 0) {
 			for (j = 0; j < 21; j++) {
@@ -39,7 +40,7 @@ double** initMatrix(double** A, double** B, double** C, double** D, double** E, 
 					D[i][j] = -(k[i][j] * DY) / (2 * DX);
 					E[i][j] = -(k[i][j] * DX) / (2 * DY);
 					C[i][j] = -(D[i][j] + E[i][j]);
-					Q[i][j] = q[i][j] * (DX / 2 * DY / 2);
+					Q[j] = q[i][j] * (DX / 2 * DY / 2);
 				}
 				// x == 0
 				else {
@@ -48,7 +49,7 @@ double** initMatrix(double** A, double** B, double** C, double** D, double** E, 
 					D[i][j] = -(k[i][j - 1] * DX + k[i][j] * DX) / (2 * DY);
 					E[i][j] = -(k[i][j] * DX) / (2 * DY);
 					C[i][j] = -(A[i][j] + B[i][j] + D[i][j] + E[i][j]);
-					Q[i][j] = (q[i][j - 1] + q[i][j]) * (DX / 2 * DY / 2);
+					Q[i+21*j] = (q[i][j - 1] + q[i][j]) * (DX / 2 * DY / 2);
 				}
 			}
 		}
@@ -60,7 +61,7 @@ double** initMatrix(double** A, double** B, double** C, double** D, double** E, 
 					D[i][j] = -(k[i][j] * DY) / (2 * DX);
 					E[i][j] = -(k[i - 1][j] * DX + k[i][j]*DX) / (2 * DY);
 					C[i][j] = -(B[i][j] + D[i][j] + E[i][j]);
-					Q[i][j] = (q[i - 1][j] + q[i][j]) * (DX / 2 * DY / 2);
+					Q[i] = (q[i - 1][j] + q[i][j]) * (DX / 2 * DY / 2);
 				}
 				else {
 					A[i][j] = -(k[i - 1][j - 1] * DX + k[i][j - 1] * DX) / (2 * DY);
@@ -68,9 +69,46 @@ double** initMatrix(double** A, double** B, double** C, double** D, double** E, 
 					D[i][j] = -(k[i][j - 1] * DX + k[i][j] * DX) / (2 * DY);
 					E[i][j] = -(k[i - 1][j] * DX + k[i][j] * DX) / (2 * DY);
 					C[i][j] = -(A[i][j] + B[i][j] + D[i][j] + E[i][j]);
-					Q[i][j] = (q[i - 1][j - 1] + q[i][j - 1] + q[i - 1][j] + q[i][j]) * (DX / 2 * DY / 2);
+					Q[i*21+j] = (q[i - 1][j - 1] + q[i][j - 1] + q[i - 1][j] + q[i][j]) * (DX / 2 * DY / 2);
 				}
 			}
+		}
+	}
+
+	// matrix
+	for (i = 0; i < 21; i++) {
+		for (j = 0; j < 21; j++) {
+			// case 1. (0, 0)
+			if (i == 0 && j == 0) {
+				matrix[i][0] = C[i][j];
+				matrix[i][1] = D[i][j];
+				matrix[i][21] = E[i][j];
+				continue;
+			}
+			//case 2. (i, 0)
+			if (i != 0 && i < 21 && j == 0) {
+				matrix[i][i - 1] = B[i][j];
+				matrix[i][i] = C[i][j];
+				matrix[i][i + 1] = D[i][j];
+				matrix[i][i + 21] = E[i][j];
+				continue;
+			}
+			//case 3. (0, j)
+			m = i + 21 * j;
+			if (m % 21 == 0) {
+				matrix[m][m - 21] = A[i][j];
+				matrix[m][m] = C[i][j];
+				matrix[m][m + 1] = D[i][j];
+				matrix[m][m + 21] = E[i][j];
+				continue;
+			}
+
+			n = i * 21 + j;
+			matrix[n][n - 21] = A[i][j];
+			matrix[n][n - 1] = B[i][j];
+			matrix[n][n] = C[i][j];
+			matrix[n][n + 1] = D[i][j];
+			matrix[n][n + 21] = E[i][j];
 		}
 	}
 }
@@ -81,7 +119,37 @@ int main() {
 
 	double** k, ** q;
 	double** A, ** B, ** C, ** D, ** E;
-	double** matrix, ** Q, ** T, ** T_OLD;
+	double** matrix, * Q, * T, * T_OLD;
+
+	// step 20
+	A = (double**)malloc(sizeof(double*) * 21);
+	for (i = 0; i < 21; i++) {
+		A[i] = (double*)calloc(21, sizeof(double));
+	}
+
+	// step 20
+	B = (double**)malloc(sizeof(double*) * 21);
+	for (i = 0; i < 21; i++) {
+		B[i] = (double*)calloc(21, sizeof(double));
+	}
+
+	// step 20
+	C = (double**)malloc(sizeof(double*) * 21);
+	for (i = 0; i < 21; i++) {
+		C[i] = (double*)calloc(21, sizeof(double));
+	}
+
+	// step 20
+	D = (double**)malloc(sizeof(double*) * 21);
+	for (i = 0; i < 21; i++) {
+		D[i] = (double*)calloc(21, sizeof(double));
+	}
+
+	// step 20
+	E = (double**)malloc(sizeof(double*) * 21);
+	for (i = 0; i < 21; i++) {
+		E[i] = (double*)calloc(21, sizeof(double));
+	}
 
 	// step 20
 	k = (double**)malloc(sizeof(double*) * 21);
@@ -118,53 +186,46 @@ int main() {
 	}
 
 	// ABCDE matrix
-	matrix = (double**)malloc(sizeof(double*) * 21);
-	for (i = 0; i < 21; i++) {
-		matrix[i] = (double*)calloc(21, sizeof(double));
+	matrix = (double**)malloc(sizeof(double*) * 441);
+	for (i = 0; i < 441; i++) {
+		matrix[i] = (double*)calloc(441, sizeof(double));
 	}
 
 	// Q
-	Q = (double**)malloc(sizeof(double*) * 21);
-	for (i = 0; i < 21; i++) {
-		Q[i] = (double*)calloc(21, sizeof(double));
-	}
+	Q = (double*)calloc(441, sizeof(double));
 
 	// T, T-old
-	T = (double**)malloc(sizeof(double*) * 21);
-	for (i = 0; i < 21; i++) {
-		T[i] = (double*)calloc(21, sizeof(double));
-	}
-	T_OLD = (double**)malloc(sizeof(double*) * 21);
-	for (i = 0; i < 21; i++) {
-		T_OLD[i] = (double*)calloc(21, sizeof(double));
-	}
+	T = (double*)calloc(441, sizeof(double));
+	T_OLD = (double*)calloc(441, sizeof(double));
 
-	for (i = 0; i < 21; i++) {
+	for (i = 0; i < 441; i++) {
 		// 상부 경계
-		T[i][20] = 50.0 - 10.0 * powf(i, 2);
+		if (i > 419) {
+			T[i] = 50.0 - 10.0 * powf(i, 2);
+		}
 
 		// 우측 경계
-		if (i == 20) {
-			for (j = 0; j < 21; j++) {
-				T[i][j] = 40.0;
-			}
+		if (i % 21 == 20) {
+			T[i] = 40.0;
 		}
 	}
 
 	for (i = 0; i < 21; i++) {
-		for (j = 0; j < 3; j++) {
+		for (j = 0; j < 21; j++) {
 			printf("%.3f ", matrix[i][j]);
 		}
 		printf("\n");
 	}
 
-	printf("\nB vector\n");
-	for (i = 0; i < 21; i++) {
-		printf("%.3f\n", B[i]);
+	printf("\nT vector\n");
+	for (i = 0; i < 441; i++) {
+		printf("%.3f\n", T[i]);
 	}
 
+	initMatrix(A, B, C, D, E, Q, k, q, matrix);
+
 	i = 0;
-	while (1) {
+	/*while (1) {
 		flag = 0;
 		jacobi_sequence(matrix, X, B, X_OLD);
 		for (j = 0; j < 21; j++) {
@@ -191,5 +252,5 @@ int main() {
 	printf("\nX vector\n");
 	for (i = 0; i < 69; i++) {
 		printf("%.3f\n", X[i]);
-	}
+	}*/
 }
