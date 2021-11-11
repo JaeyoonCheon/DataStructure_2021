@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAX_QUEUE_SIZE 100
+
 typedef struct vertex* vertexPointer;
 typedef struct vertex {
 	int key;
@@ -10,7 +12,7 @@ typedef struct vertex {
 }vertex;
 
 vertexPointer* adjList;
-int maxPath, minPath, count, found;
+int max = 0, min = 0, count, found;
 int s, e;
 
 int* queue;
@@ -76,9 +78,11 @@ int main() {
 
 		if (s == 0 && e == 0)
 			break;
+		if (s == e)
+			continue;
 
-		queue = (int*)calloc(n, sizeof(int));
-		visited = (int*)calloc(n, sizeof(int));
+		queue = (int*)calloc(MAX_QUEUE_SIZE, sizeof(int));
+		visited = (int*)calloc(n + 1, sizeof(int));
 		count = 0;
 		found = 0;
 
@@ -98,24 +102,28 @@ int main() {
 			for (; pointer; pointer = pointer->link) {
 				if (pointer->key == e) {
 					found = 1;
-					printf("Shortest path length: %d\n", count);
 					break;
 				}
 				if (!visited[pointer->key]) {
 					visited[pointer->key] = 1;
 					add(pointer->key);
+					max++;
 				}
 			}
-			if (found)
-				break;
 
 			// 길이 1 증가
-			count++;
+			max--;
+			if(max == 0)
+				count++;
 		}
 		if (!found) {
 			printf("No Path!\n");
 		}
+		else {
+			printf("Shortest path length: %d\n", count);
+		}
 		front = -1;
 		rear = -1;
+		max = 0;
 	}
 }
