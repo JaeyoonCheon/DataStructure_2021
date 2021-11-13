@@ -9,21 +9,29 @@
 #define DX 0.05
 #define DY 0.05
 
-void jacobi_sequence(double** matrix, double* X, double* B, double* X_OLD) {
-	int i, j, k;
+void jacobi_sequence(double** matrix, double* T, double* Q, double* T_OLD) {
+	int i, j, k, m;
 	double temp, temp2;
 
-	for (i = 0; i < 69; i++) {
-		temp = matrix[i][0] * X_OLD[i - 1] + matrix[i][2] * X_OLD[i + 1];
+	for (i = 0; i < 441; i++) {
+		// 대각성분 아닌 값과 x값 곱한거
+		// 1. (0,0)
 		if (i == 0) {
-			temp = matrix[i][2] * X_OLD[i + 1];
+			temp = matrix[i][1] * T_OLD[1] + matrix[i][21] * T_OLD[21];
+			T[i] = (1 / matrix[i][0]) * (Q[i] - temp);
 		}
-		if (i == 68) {
-			temp = matrix[i][0] * X_OLD[i - 1];
+		else if (i > 1 && i < 21)  {
+			temp = matrix[i][i - 1] * T_OLD[i-1] + matrix[i][i+1] * T_OLD[i+1] + matrix[i][i + 21] * T_OLD[i + 21];
+			T[i] = (1 / matrix[i][i]) * (Q[i] - temp);
 		}
-
-		X[i] = (1 / matrix[i][1]) * (B[i] - temp);
-		//X_OLD[i] = X[i];
+		else if (i != 0 && i % 21 == 0) {
+			temp = matrix[i][i - 21] * T_OLD[i - 21] + matrix[i][i + 1] * T_OLD[i + 1] + matrix[i][i + 21] * T_OLD[i + 21];
+			T[i] = (1 / matrix[i][i]) * (Q[i] - temp);
+		}
+		else {
+			temp = matrix[i][i - 21] * T_OLD[i - 21] + matrix[i][i - 1] * T_OLD[i - 1] + matrix[i][i + 1] * T_OLD[i + 1] + matrix[i][i + 21] * T_OLD[i + 21];
+			T[i] = (1 / matrix[i][i]) * (Q[i] - temp);
+		}
 	}
 }
 
@@ -115,7 +123,7 @@ double** initMatrix(double** A, double** B, double** C, double** D, double** E, 
 
 int main() {
 	int i, j, flag = 0;
-	double Tf = 0, Tr = 40.0;
+	double Tf = 0, Tr = 40.0, err = 0, tempStep = 0;
 
 	double** k, ** q;
 	double** A, ** B, ** C, ** D, ** E;
@@ -198,10 +206,12 @@ int main() {
 	T = (double*)calloc(441, sizeof(double));
 	T_OLD = (double*)calloc(441, sizeof(double));
 
+	tempStep = 0;
 	for (i = 0; i < 441; i++) {
 		// 상부 경계
 		if (i > 419) {
-			T[i] = 50.0 - 10.0 * powf(i, 2);
+			tempStep += DX;
+			T[i] = 50.0 - 10.0 * powf(tempStep, 2);
 		}
 
 		// 우측 경계
@@ -210,34 +220,35 @@ int main() {
 		}
 	}
 
-	for (i = 0; i < 21; i++) {
-		for (j = 0; j < 21; j++) {
-			printf("%.3f ", matrix[i][j]);
-		}
-		printf("\n");
-	}
-
-	printf("\nT vector\n");
-	for (i = 0; i < 441; i++) {
-		printf("%.3f\n", T[i]);
-	}
-
 	initMatrix(A, B, C, D, E, Q, k, q, matrix);
 
 	i = 0;
-	/*while (1) {
+	while (1) {
 		flag = 0;
-		jacobi_sequence(matrix, X, B, X_OLD);
-		for (j = 0; j < 21; j++) {
-			err = (X[j] - X_OLD[j]) / X[j];
+		jacobi_sequence(matrix, T, Q, T_OLD);
+		tempStep = 0;
+		for (i = 0; i < 441; i++) {
+			// 상부 경계
+			if (i > 419) {
+				tempStep += DX;
+				T[i] = 50.0 - 10.0 * powf(tempStep, 2);
+			}
+
+			// 우측 경계
+			if (i % 21 == 20) {
+				T[i] = 40.0;
+			}
+		}
+		for (j = 0; j < 441; j++) {
+			err = (T[j] - T_OLD[j]) / T[j];
 			if (err > MAX_ERR) {
 				flag = 1;
 				break;
 			}
 		}
 		if (flag == 1) {
-			for (j = 0; j < 69; j++) {
-				X_OLD[j] = X[j];
+			for (j = 0; j < 441; j++) {
+				T_OLD[j] = T[j];
 			}
 		}
 		else {
@@ -249,8 +260,15 @@ int main() {
 
 	printf("\n%d iteration\n", i);
 
-	printf("\nX vector\n");
-	for (i = 0; i < 69; i++) {
-		printf("%.3f\n", X[i]);
-	}*/
+	for (i = 0; i < 40; i++) {
+		for (j = 0; j < 40; j++) {
+			printf("%.3f ", matrix[i][j]);
+		}
+		printf("\n");
+	}
+
+	printf("\nT vector\n");
+	for (i = 0; i < 441; i++) {
+		printf("%.3f\n", T[i]);
+	}
 }
