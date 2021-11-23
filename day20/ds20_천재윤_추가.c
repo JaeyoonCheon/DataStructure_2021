@@ -32,16 +32,19 @@ void merge(element initList[], element mergedList[], int i, int m, int n, char k
 				mergedList[k++] = initList[i++];
 			else
 				mergedList[k++] = initList[j++];
+			break;
 		case 'Y':
 			if (initList[i].y <= initList[j].y)
 				mergedList[k++] = initList[i++];
 			else
 				mergedList[k++] = initList[j++];
+			break;
 		case 'Z':
 			if (initList[i].z <= initList[j].z)
 				mergedList[k++] = initList[i++];
 			else
 				mergedList[k++] = initList[j++];
+			break;
 		default:
 			break;
 		}

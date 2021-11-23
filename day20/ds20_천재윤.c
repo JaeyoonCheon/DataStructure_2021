@@ -16,6 +16,7 @@ element values[MAX_ARR_SIZE];
 element evaluation[MAX_ARR_SIZE];
 int size = 0;
 int evalSize = 0;
+char crit, evalCrit;
 
 void quickSortX(element list[], int left, int right) {
 	int pivot;
@@ -82,7 +83,7 @@ void quickSortZ(element list[], int left, int right) {
 
 int main() {
 	FILE* fp, *output, *eval;
-	int i;
+	int i, flag = 0;
 	int X, Y, Z;
 	char crit;
 
@@ -131,46 +132,58 @@ int main() {
 			fprintf(output, "\n");
 	}
 
-	fscanf(eval, "%c", crit);
+	fclose(output);
+
+	eval = fopen("out.txt", "r");
+
+	fscanf(eval, "%c", &evalCrit);
 
 	while (!feof(eval)) {
 		fscanf(eval, "%d %d %d", &X, &Y, &Z);
-		evaluation[size].x = X;
-		evaluation[size].y = Y;
-		evaluation[size].z = Z;
+		evaluation[evalSize].x = X;
+		evaluation[evalSize].y = Y;
+		evaluation[evalSize].z = Z;
 		evalSize++;
 	}
+	evalSize--;
 
 	i = 0;
 
-	switch (crit)
+	switch (evalCrit)
 	{
 	case 'X':
 		while (i < evalSize) {
 			if (evaluation[i].x > evaluation[i + 1].x) {
-				printf("fail");
+				printf("fail\n");
+				flag = 1;
+				break;
 			}
 			i++;
 		}
-		printf("success\n");
+		if (!flag)
+			printf("success\n");
 		break;
 	case 'Y':
 		while (i < evalSize) {
 			if (evaluation[i].y > evaluation[i + 1].y) {
-				printf("fail");
+				printf("fail\n");
+				break;
 			}
 			i++;
 		}
-		printf("success\n");
+		if (!flag)
+			printf("success\n");
 		break;
 	case 'Z':
 		while (i < evalSize) {
 			if (evaluation[i].z > evaluation[i + 1].z) {
-				printf("fail");
+				printf("fail\n");
+				break;
 			}
 			i++;
 		}
-		printf("success\n");
+		if (!flag)
+			printf("success\n");
 		break;
 	default:
 		break;
