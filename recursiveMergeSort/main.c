@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAX_ARR_SIZE 100
+
 typedef struct element {
 	int x;
 	int y;
@@ -44,5 +46,8 @@ int rmergeSort(element a[], int link[], int left, int right) {
 }
 
 int main() {
+	element a[MAX_ARR_SIZE];
+	int link[MAX_ARR_SIZE];
+
 
 }
