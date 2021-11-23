@@ -339,12 +339,6 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 
-./sparseMatrix/sparseMatrix.zip
-./sparseMatrix/MatrixA.txt
-./sparseMatrix/VectorX.txt
-./sparseMatrix/out.txt
-./sparseMatrix/aprox.txt
-./sparseMatrix/VectorB.txt
 /sparseMatrix/sparseMatrix.zip
 /sparseMatrix/MatrixA.txt
 /sparseMatrix/VectorX.txt
@@ -352,5 +346,8 @@ healthchecksdb
 /sparseMatrix/aprox.txt
 /sparseMatrix/VectorB.txt
 *.zip
-*.txt
 /sparseMatrix/out - 복사본.txt
+/sparseMatrix/VectorW.txt
+/sparseMatrix/8W.txt
+/sparseMatrix/8X.txt
+/sparseMatrix/8x8A.txt
