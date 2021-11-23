@@ -18,17 +18,34 @@ int size = 1;
 int evalSize = 0;
 char crit, evalCrit;
 
-void mergeX(element initList[], element mergedList[], int i, int m, int n) {
+void merge(element initList[], element mergedList[], int i, int m, int n, char keyword) {
 	int j, k, t;
 
 	j = m + 1;
 	k = i;
 
 	while (i <= m && j <= n) {
-		if (initList[i].x <= initList[j].x)
-			mergedList[k++] = initList[i++];
-		else
-			mergedList[k++] = initList[j++];
+		switch (keyword)
+		{
+		case 'X':
+			if (initList[i].x <= initList[j].x)
+				mergedList[k++] = initList[i++];
+			else
+				mergedList[k++] = initList[j++];
+		case 'Y':
+			if (initList[i].y <= initList[j].y)
+				mergedList[k++] = initList[i++];
+			else
+				mergedList[k++] = initList[j++];
+		case 'Z':
+			if (initList[i].z <= initList[j].z)
+				mergedList[k++] = initList[i++];
+			else
+				mergedList[k++] = initList[j++];
+		default:
+			break;
+		}
+
 	}
 	if (i > m)
 		for (t = j; t <= n; t++)
@@ -38,79 +55,13 @@ void mergeX(element initList[], element mergedList[], int i, int m, int n) {
 			mergedList[k + t - i] = initList[t];
 }
 
-void mergeY(element initList[], element mergedList[], int i, int m, int n) {
-	int j, k, t;
-
-	j = m + 1;
-	k = i;
-
-	while (i <= m && j <= n) {
-		if (initList[i].y <= initList[j].y)
-			mergedList[k++] = initList[i++];
-		else
-			mergedList[k++] = initList[j++];
-	}
-	if (i > m)
-		for (t = j; t <= n; t++)
-			mergedList[t] = initList[t];
-	else
-		for (t = i; t <= m; t++)
-			mergedList[k + t - i] = initList[t];
-}
-
-void mergeZ(element initList[], element mergedList[], int i, int m, int n) {
-	int j, k, t;
-
-	j = m + 1;
-	k = i;
-
-	while (i <= m && j <= n) {
-		if (initList[i].z <= initList[j].z)
-			mergedList[k++] = initList[i++];
-		else
-			mergedList[k++] = initList[j++];
-	}
-	if (i > m)
-		for (t = j; t <= n; t++)
-			mergedList[t] = initList[t];
-	else
-		for (t = i; t <= m; t++)
-			mergedList[k + t - i] = initList[t];
-}
-
-void mergePass(element initList[], element mergedList[], int n, int s) {
+void mergePass(element initList[], element mergedList[], int n, int s, char keyword) {
 	int i, j;
 	for (i = 1; i <= n - 2 * s + 1; i += 2 * s) {
-		switch (crit)
-		{
-		case 'X':
-			mergeX(initList, mergedList, i, i + s - 1, i + 2 * s - 1);
-			break;
-		case 'Y':
-			mergeY(initList, mergedList, i, i + s - 1, i + 2 * s - 1);
-			break;
-		case 'Z':
-			mergeZ(initList, mergedList, i, i + s - 1, i + 2 * s - 1);
-			break;
-		default:
-			break;
-		}
+		merge(initList, mergedList, i, i + s - 1, i + 2 * s - 1, keyword);
 	}
 	if (i + s - 1 < n) {
-		switch (crit)
-		{
-		case 'X':
-			mergeX(initList, mergedList, i, i + s - 1, n);
-			break;
-		case 'Y':
-			mergeY(initList, mergedList, i, i + s - 1, n);
-			break;
-		case 'Z':
-			mergeZ(initList, mergedList, i, i + s - 1, n);
-			break;
-		default:
-			break;
-		}
+		merge(initList, mergedList, i, i + s - 1, n, keyword);
 	}
 	else {
 		for (j = i; j <= n; j++) {
@@ -119,14 +70,14 @@ void mergePass(element initList[], element mergedList[], int n, int s) {
 	}
 }
 
-void mergeSort(element a[], int n) {
+void mergeSort(element a[], int n, char keyword) {
 	int s = 1;
 	element extra[MAX_ARR_SIZE];
 	
 	while (s < n) {
-		mergePass(a, extra, n, s);
+		mergePass(a, extra, n, s, keyword);
 		s *= 2;
-		mergePass(extra, a, n, s);
+		mergePass(extra, a, n, s, keyword);
 		s *= 2;
 	}
 }
@@ -155,23 +106,8 @@ int main() {
 
 	scanf("%c", &crit);
 
-	switch (crit)
-	{
-	case 'X':
-		fprintf(output, "X\n");
-		mergeSort(values, size - 1);
-		break;
-	case 'Y':
-		fprintf(output, "Y\n");
-		mergeSort(values, size - 1);
-		break;
-	case 'Z':
-		fprintf(output, "Z\n");
-		mergeSort(values, size - 1);
-		break;
-	default:
-		break;
-	}
+	fprintf(output, "%c\n", crit);
+	mergeSort(values, size - 1, crit);
 
 	for (i = 1; i < size; i++) {
 		fprintf(output, "%d %d %d", values[i].x, values[i].y, values[i].z);
