@@ -85,6 +85,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "day20", "day20\day20.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "recursiveMergeSort", "recursiveMergeSort\recursiveMergeSort.vcxproj", "{DEAA0E10-BFB0-4E16-8FA7-CF87E99D0BD7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "day21", "day21\day21.vcxproj", "{A10420C0-5EC5-47BE-8618-00299936D4EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -421,6 +423,14 @@ Global
 		{DEAA0E10-BFB0-4E16-8FA7-CF87E99D0BD7}.Release|x64.Build.0 = Release|x64
 		{DEAA0E10-BFB0-4E16-8FA7-CF87E99D0BD7}.Release|x86.ActiveCfg = Release|Win32
 		{DEAA0E10-BFB0-4E16-8FA7-CF87E99D0BD7}.Release|x86.Build.0 = Release|Win32
+		{A10420C0-5EC5-47BE-8618-00299936D4EB}.Debug|x64.ActiveCfg = Debug|x64
+		{A10420C0-5EC5-47BE-8618-00299936D4EB}.Debug|x64.Build.0 = Debug|x64
+		{A10420C0-5EC5-47BE-8618-00299936D4EB}.Debug|x86.ActiveCfg = Debug|Win32
+		{A10420C0-5EC5-47BE-8618-00299936D4EB}.Debug|x86.Build.0 = Debug|Win32
+		{A10420C0-5EC5-47BE-8618-00299936D4EB}.Release|x64.ActiveCfg = Release|x64
+		{A10420C0-5EC5-47BE-8618-00299936D4EB}.Release|x64.Build.0 = Release|x64
+		{A10420C0-5EC5-47BE-8618-00299936D4EB}.Release|x86.ActiveCfg = Release|Win32
+		{A10420C0-5EC5-47BE-8618-00299936D4EB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
