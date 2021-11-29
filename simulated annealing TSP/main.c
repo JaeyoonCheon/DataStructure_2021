@@ -4,18 +4,18 @@
 #include <string.h>
 #include <time.h>
 
-#define MAX_PATH 100
-#define MAX_LEN 100
+#define MAX_PATH 200
+#define MAX_LEN 200
 
 double cost[MAX_PATH][MAX_PATH];
 int originPath[MAX_PATH], revisedPath[MAX_PATH], swapped[MAX_PATH];
-int num = 12, swap, minDist = 999999;
+int num = 12, swap, minDist = 999999, starting = 0;
 
 double evalCost(int path[]) {
 	double distance = 0;
 	int i, j;
 
-	for (i = 0; i < num; i++) {
+	for (i = 0; i < num + 1; i++) {
 		distance += cost[path[i]][path[i + 1]];
 	}
 
@@ -25,85 +25,87 @@ double evalCost(int path[]) {
 void initSeq(int path[], int starting) {
 	int i, j;
 
-	for (i = 0; i < num+1; i++) {
-		if (i == starting) {
-			path[i] = 0;
-		}
-		else {
-			path[i] = i;
-		}
-	}
-	path[0] = starting;
-	path[num] = starting;
+	//for (i = 0; i < num+1; i++) {
+	//	if (i == starting) {
+	//		path[i] = 0;
+	//	}
+	//	else {
+	//		path[i] = i;
+	//	}
+	//}
+	//path[0] = starting;
+	//path[num] = starting;
+
+	path[0] = 0;
+	path[1] = 2;
+	path[2] = 9;
+	path[3] = 4;
+	path[4] = 7;
+	path[5] = 5;
+	path[6] = 3;
+	path[7] = 10;
+	path[8] = 1;
+	path[9] = 8;
+	path[10] = 6;
+	path[11] = 11;
+	path[12] = 0;
+
+	// minimum path
+	//path[0] = 0;
+	//path[1] = 1;
+	//path[2] = 2;
+	//path[3] = 3;
+	//path[4] = 4;
+	//path[5] = 5;
+	//path[6] = 6;
+	//path[7] = 7;
+	//path[8] = 8;
+	//path[9] = 9;
+	//path[10] = 10;
+	//path[11] = 11;
+	//path[12] = 0;
 }
 
 void swapLocation(int path[], int from, int to) {
 	int i, temp, idx1 = 0, idx2 = 0;
 
-	for (i = 0; i < num; i++) {
-		if (path[i] == from) {
-			idx1 = i;
-			continue;
-		}
-		if (path[i] == to) {
-			idx2 = i;
-			continue;
-		}
-	}
-
-	temp = path[idx1];
-	path[idx1] = path[idx2];
-	path[idx2] = temp;
+	temp = path[from];
+	path[from] = path[to];
+	path[to] = temp;
 }
 
-void revise(int path[]) {
+void revise(int path[], int start) {
 	int i, j, size = -1;
 	int idx1, idx2, flag = 0;;
 
 	for (i = 0; i < swap; i++) {
-		size++;
-		while (flag == 0) {
-			idx1 = rand() % 11 + 1;
-			flag = 1;
-			swapped[size] = idx1;
-			for (j = 0; j < size; j++) {
-				if (swapped[j] == idx1) {
-					flag = 0;
-					break;
-				}
-			}
-		}
-		size++;
-		flag = 0;
-		while (flag == 0) {
-			idx2 = rand() % 11 + 1;
-			flag = 1;
-			swapped[size] = idx2;
-			for (j = 0; j < size; j++) {
-				if (swapped[j] == idx2) {
-					flag = 0;
-					break;
-				}
-			}
-		}
+		idx1 = rand() % 11 + 1;
+		if (idx1 == start)
+			continue;
+
+		idx2 = rand() % 11 + 1;
+		if (idx2 == start || idx2 == idx1)
+			continue;
 
 		swapLocation(path, idx1, idx2);
 	}
 
-	
+
 }
 
-int compare() {
+int compare(int start) {
 	int i;
 	double currSum = 0, revisedSum = 0;
 
 	currSum = evalCost(originPath);
-	revise(revisedPath);
+	if (minDist == 999999)
+		minDist = currSum;
+	revise(revisedPath, start);
 	revisedSum = evalCost(revisedPath);
 
 	if (currSum > revisedSum) {
 		minDist = revisedSum;
-		for (i = 1; i < num-1; i++) {
+		for (i = 1; i < num; i++) {
 			originPath[i] = revisedPath[i];
 		}
 		return 1;
@@ -139,20 +141,19 @@ int main() {
 		i++;
 	}
 
-	swap = ((num / 2) - 2) / 2;
 
 	initSeq(originPath, 0);
 	initSeq(revisedPath, 0);
 
-	while (count < 100) {
-		if (compare() == 1) {
-			count = 0;
+	while (repeat < 100000) {
+		if (compare(starting) == 1) {
+			repeat = 0;
 		}
 		else {
-			count++;
+			repeat++;
 		}
-		repeat++;
+		swap = rand() % num + 1;
 	}
 
-	printf("!");
+	printf("%d", minDist);
 }
